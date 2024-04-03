@@ -15,7 +15,7 @@ import {
   Link
 } from '@material-ui/core';
 
-import { LockOutlined, Visibility, VisibilityOff } from '@material-ui/icons';
+import { Image, LockOutlined, Visibility, VisibilityOff } from '@material-ui/icons';
 
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -54,6 +54,10 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  logoLogin: {
+    width: "200px",
+    height: "200px"
+  },
 }));
 
 const Login = () => {
@@ -76,10 +80,9 @@ const Login = () => {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
+      
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlined />
-        </Avatar>
+       <img className={classes.logoLogin} src="logo.jpg"></img>
         <Typography component="h1" variant="h5">
           {i18n.t("login.title")}
         </Typography>
@@ -131,7 +134,18 @@ const Login = () => {
           >
             {i18n.t("login.buttons.submit")}
           </Button>
-          
+          <Grid container>
+            <Grid item>
+              <Link
+                href="#"
+                variant="body2"
+                component={RouterLink}
+                to="/signup"
+              >
+                
+              </Link>
+            </Grid>
+          </Grid>
         </form>
       </div>
       <Box mt={8}>{/* <Copyright /> */}</Box>

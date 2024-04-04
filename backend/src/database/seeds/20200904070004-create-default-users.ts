@@ -12,7 +12,8 @@ module.exports = {
           profile: "admin",
           tokenVersion: 0,
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
+          access: ""
         }
       ],
       {}

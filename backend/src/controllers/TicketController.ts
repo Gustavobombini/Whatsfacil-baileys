@@ -111,6 +111,15 @@ export const update = async (
   const { ticketId } = req.params;
   const ticketData: TicketData = req.body;
 
+  if(ticketData.status === "closed_s_msg"){
+    const { ticket } =  await UpdateTicketService({
+      ticketData: {status: "closed"},
+      ticketId
+    });
+
+    return res.status(200).json(ticket)
+
+  }else{
   const { ticket } = await UpdateTicketService({
     ticketData,
     ticketId
@@ -131,7 +140,7 @@ export const update = async (
 
   return res.status(200).json(ticket);
 };
-
+}
 export const remove = async (
   req: Request,
   res: Response

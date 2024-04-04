@@ -2,9 +2,13 @@ import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core/styles";
-import { IconButton } from "@material-ui/core";
+import { IconButton} from "@material-ui/core";
 import { MoreVert, Replay } from "@material-ui/icons";
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
 import TicketOptionsMenu from "../TicketOptionsMenu";
@@ -82,15 +86,21 @@ const TicketActionButtons = ({ ticket }) => {
 					>
 						{i18n.t("messagesList.header.buttons.return")}
 					</ButtonWithSpinner>
-					<ButtonWithSpinner
-						loading={loading}
-						size="small"
-						variant="contained"
-						color="primary"
-						onClick={e => handleUpdateTicketStatus(e, "closed", user?.id)}
-					>
-						{i18n.t("messagesList.header.buttons.resolve")}
-					</ButtonWithSpinner>
+					<PopupState variant="popover" popupId="demo-popup-menu">
+						{(popupState) => (
+							<React.Fragment>
+							<Button variant="contained" color="primary" {...bindTrigger(popupState)}>
+								Finalizar
+							</Button>
+							
+							<Menu {...bindMenu(popupState)}>
+								<MenuItem onClick={e => handleUpdateTicketStatus(e, "closed", user?.id)}>Com msg.</MenuItem>
+								<MenuItem onClick={e => handleUpdateTicketStatus(e, "closed_s_msg", user?.id)}>Sem msg.</MenuItem>
+								
+							</Menu>
+							</React.Fragment>
+						)}
+					</PopupState>
 					<IconButton onClick={handleOpenTicketOptionsMenu}>
 						<MoreVert />
 					</IconButton>

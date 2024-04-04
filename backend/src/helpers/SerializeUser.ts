@@ -9,6 +9,9 @@ interface SerializedUser {
   profile: string;
   queues: Queue[];
   whatsapp: Whatsapp;
+  queuesNull: boolean;
+  access: string;
+  seeAllMsg: number;
 }
 
 export const SerializeUser = (user: User): SerializedUser => {
@@ -18,6 +21,9 @@ export const SerializeUser = (user: User): SerializedUser => {
     email: user.email,
     profile: user.profile,
     queues: user.queues,
-    whatsapp: user.whatsapp
+    whatsapp: user.whatsapp,
+    queuesNull: user.queuesNull,
+    access: user.access,
+    seeAllMsg: user.seeAllMsg
   };
 };

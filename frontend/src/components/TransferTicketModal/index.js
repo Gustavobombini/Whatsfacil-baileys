@@ -135,46 +135,7 @@ const TransferTicketModal = ({ modalOpen, onClose, ticketid, ticketWhatsappId })
 					{i18n.t("transferTicketModal.title")}
 				</DialogTitle>
 				<DialogContent dividers>
-					<Autocomplete
-						style={{ width: 300, marginBottom: 20 }}
-						getOptionLabel={option => `${option.name}`}
-						onChange={(e, newValue) => {
-							setSelectedUser(newValue);
-							if (newValue != null && Array.isArray(newValue.queues)) {
-								setQueues(newValue.queues);
-							} else {
-								setQueues(allQueues);
-								setSelectedQueue('');
-							}
-						}}
-						options={options}
-						filterOptions={filterOptions}
-						freeSolo
-						autoHighlight
-						noOptionsText={i18n.t("transferTicketModal.noOptions")}
-						loading={loading}
-						renderInput={params => (
-							<TextField
-								{...params}
-								label={i18n.t("transferTicketModal.fieldLabel")}
-								variant="outlined"
-								required
-								autoFocus
-								onChange={e => setSearchParam(e.target.value)}
-								InputProps={{
-									...params.InputProps,
-									endAdornment: (
-										<React.Fragment>
-											{loading ? (
-												<CircularProgress color="inherit" size={20} />
-											) : null}
-											{params.InputProps.endAdornment}
-										</React.Fragment>
-									),
-								}}
-							/>
-						)}
-					/>
+					
 					<FormControl variant="outlined" className={classes.maxWidth}>
 						<InputLabel>{i18n.t("transferTicketModal.fieldQueueLabel")}</InputLabel>
 						<Select

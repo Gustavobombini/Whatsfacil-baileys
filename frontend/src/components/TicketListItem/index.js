@@ -13,13 +13,15 @@ import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
-import DoneIcon from '@material-ui/icons/Done';
 import IconButton from '@material-ui/core/IconButton';
-import VisibilityIcon from '@material-ui/icons/Visibility'
 import { i18n } from "../../translate/i18n";
-
+import DoneIcon from '@material-ui/icons/Done';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import ReplayIcon from '@material-ui/icons/Replay';
+import StopIcon from '@material-ui/icons/Stop';
 import api from "../../services/api";
-import ButtonWithSpinner from "../ButtonWithSpinner";
+import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
+//import ButtonWithSpinner from "../ButtonWithSpinner";
 import MarkdownWrapper from "../MarkdownWrapper";
 import { Tooltip } from "@material-ui/core";
 import { AuthContext } from "../../context/Auth/AuthContext";
@@ -136,22 +138,6 @@ const TicketListItem = ({ ticket }) => {
 		};
 	}, []);
 
-	const handleViewTicket = async id => {
-		setLoading(true);
-		try {
-			await api.put(`/tickets/${id}`, {
-				status: "pending",
-			});
-		} catch (err) {
-			setLoading(false);
-			toastError(err);
-		}
-		if (isMounted.current) {
-			setLoading(false);
-		}
-		history.push(`/tickets/${id}`);
-	};	
-
 	const handleAcepptTicket = async id => {
 		setLoading(true);
 		try {
@@ -169,15 +155,63 @@ const TicketListItem = ({ ticket }) => {
 		history.push(`/tickets/${id}`);
 	};
 
+	const handleReopenTicket = async id => {
+		setLoading(true);
+		try {
+			await api.put(`/tickets/${id}`, {
+				status: "open",
+				userId: user?.id,
+			});
+		} catch (err) {
+			setLoading(false);
+			toastError(err);
+		}
+		if (isMounted.current) {
+			setLoading(false);
+		}
+		history.push(`/tickets/${id}`);
+	};
+
+	const handleViewTicket = async id => {
+		setLoading(true);
+		try {
+			await api.put(`/tickets/${id}`, {
+				status: "pending",
+			});
+		} catch (err) {
+			setLoading(false);
+			toastError(err);
+		}
+		if (isMounted.current) {
+			setLoading(false);
+		}
+		history.push(`/tickets/${id}`);
+	};	
+
+	const handleClosedTicket = async id => {
+		setLoading(true);
+		try {
+			await api.put(`/tickets/${id}`, {
+				status: "closed",
+				userId: user?.id,
+			});
+		} catch (err) {
+			setLoading(false);
+			toastError(err);
+		}
+		if (isMounted.current) {
+			setLoading(false);
+		}
+		//history.push(`/tickets/${id}`);
+	};		
+
+	
 	const handleSelectTicket = id => {
 		history.push(`/tickets/${id}`);
 	};
 
-	
-		return (
-		
+	return (
 		<React.Fragment key={ticket.id}>
-			
 			<ListItem
 				dense
 				button
@@ -190,7 +224,6 @@ const TicketListItem = ({ ticket }) => {
 					[classes.pendingTicket]: ticket.status === "pending",
 				})}
 			>
-				
 				<Tooltip
 					arrow
 					placement="right"
@@ -216,13 +249,6 @@ const TicketListItem = ({ ticket }) => {
 							>
 								{ticket.contact.name}
 							</Typography>
-							{ticket.status === "closed" && (
-								<Badge
-									className={classes.closedBadge}
-									badgeContent={"closed"}
-									color="primary"
-								/>
-							)}
 							{ticket.lastMessage && (
 								<Typography
 									className={classes.lastMessageTime}
@@ -268,8 +294,6 @@ const TicketListItem = ({ ticket }) => {
 						</span>
 					}
 				/>
-				
-				
 				{ticket.status === "pending" && (
 					<IconButton
 					className={classes.bottomButton}
@@ -286,17 +310,48 @@ const TicketListItem = ({ ticket }) => {
 					<VisibilityIcon />
 				  	</IconButton>								
 				)}	
+				 {ticket.status === "pending" && (
+					<IconButton
+					className={classes.bottomButton}
+					color="primary"
+					onClick={e => handleClosedTicket(ticket.id)} >
+					<ClearOutlinedIcon />
+				  	</IconButton>								
+				)}				
+				{ticket.status === "open" && (
+					<IconButton
+					className={classes.bottomButton}
+					color="primary" 
+					onClick={e => handleViewTicket(ticket.id)} >
+					<ReplayIcon />
+				  	</IconButton>	
+				)}
+				 {ticket.status === "open" && (
+					<IconButton
+					className={classes.bottomButton}
+					color="primary"
+					onClick={e => handleClosedTicket(ticket.id)} >
+					<ClearOutlinedIcon />
+				  	</IconButton>								
+				)}						
+				{ticket.status === "closed" && (
+					<IconButton
+					className={classes.bottomButton}
+					color="primary" 
+					onClick={e => handleReopenTicket(ticket.id)} >
+					<ReplayIcon />
+				  	</IconButton>	
+				)}		
+				{ticket.status === "closed" && (
+					<IconButton
+					className={classes.bottomButton}
+					color="primary" >
+				  	</IconButton>	
+				)}				
 			</ListItem>
-			
-			
-		
-
 			<Divider variant="inset" component="li" />
-		
 		</React.Fragment>
 	);
-	
-	
 };
 
 export default TicketListItem;

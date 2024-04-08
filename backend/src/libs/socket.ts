@@ -38,59 +38,22 @@ export const initIO = (httpServer: Server): SocketIO => {
 
     logger.info("Client Connected");
     socket.on("joinChatBox", (ticketId: string) => {
-      if (ticketId === "undefined") {
-        return;
-      }
-      Ticket.findByPk(ticketId).then(
-        ticket => {
-          // only admin and the current user of the ticket
-          // can join the message channel of it.
-          if (
-            ticket &&
-            (ticket?.userId === user.id || user.profile === "admin")
-          ) {
-            logger.debug(`User ${user.id} joined ticket ${ticketId} channel`);
+     logger.debug(`User ${user.id} joined ticket ${ticketId} channel`);
             socket.join(ticketId);
-          } else {
-            logger.info(
-              `Invalid attempt to join chanel of ticket ${ticketId} by user ${user.id}`
-            );
-          }
-        },
-        error => {
-          logger.error(error, `Error fetching ticket ${ticketId}`);
-        }
-      );
     });
 
     socket.on("joinNotification", () => {
-      if (user.profile === "admin") {
+     
         // admin can join all notifications
         logger.debug(`Admin ${user.id} joined the notification channel.`);
         socket.join("notification");
-      } else {
-        // normal users join notifications of the queues they participate
-        user.queues.forEach(queue => {
-          logger.debug(`User ${user.id} joined queue ${queue.id} channel.`);
-          socket.join(`queue-${queue.id}-notification`);
-        });
-      }
+      
     });
 
     socket.on("joinTickets", (status: string) => {
-      if (user.profile === "admin") {
-        // only admin can join the notifications of a particular status
-        logger.debug(`Admin ${user.id} joined ${status} tickets channel.`);
+            logger.debug(`Admin ${user.id} joined ${status} tickets channel.`);
         socket.join(`${status}`);
-      } else {
-        // normal users can only receive messages of the queues they participate
-        user.queues.forEach(queue => {
-          logger.debug(
-            `User ${user.id} joined queue ${queue.id} ${status} tickets channel.`
-          );
-          socket.join(`queue-${queue.id}-${status}`);
-        });
-      }
+      
     });
 
     socket.on("disconnect", () => {

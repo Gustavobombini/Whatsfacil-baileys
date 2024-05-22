@@ -21,6 +21,7 @@ import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
+import { InputLabel, MenuItem, Select } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -72,6 +73,8 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 	};
 
 	const [contact, setContact] = useState(initialState);
+	const [contactscategories, setCategories] = useState();
+	const [Categories, setCategoriesContacts] = useState(null);
 
 	useEffect(() => {
 		return () => {
@@ -93,7 +96,20 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 				const { data } = await api.get(`/contacts/${contactId}`);
 				if (isMounted.current) {
 					setContact(data);
+					setCategoriesContacts(data.ContactsCategories)
 				}
+			} catch (err) {
+				toastError(err);
+			}
+
+			try {
+				const { data } = await api.get(`/contactcategories/`);
+				if(data){
+					setCategories(data.data);
+					
+				}
+				
+				
 			} catch (err) {
 				toastError(err);
 			}
@@ -105,10 +121,16 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 	const handleClose = () => {
 		onClose();
 		setContact(initialState);
+		setCategoriesContacts(null)
 	};
 
 	const handleSaveContact = async values => {
+		
+		values.ContactsCategories = Categories;
+		
+		console.log(values);
 		try {
+			
 			if (contactId) {
 				await api.put(`/contacts/${contactId}`, values);
 				handleClose();
@@ -183,6 +205,26 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 										margin="dense"
 										variant="outlined"
 									/>
+								</div>
+								<div>
+									<InputLabel id="label-categories">
+										Categoria
+									</InputLabel>
+									<Select
+										label="Categoria"
+										value={Categories}
+										fullWidth
+										margin="dense"
+										variant="outlined"
+										onChange={(e) => setCategoriesContacts(e.target.value)}
+
+									>
+										{contactscategories && contactscategories.map(item => 
+											<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+										)}
+										
+										
+									</Select>
 								</div>
 								<Typography
 									style={{ marginBottom: 8, marginTop: 12 }}

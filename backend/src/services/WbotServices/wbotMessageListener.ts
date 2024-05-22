@@ -34,6 +34,7 @@ import { debounce } from "../../helpers/Debounce";
 import UpdateTicketService from "../TicketServices/UpdateTicketService";
 import { sayChatbot } from "./ChatBotListener";
 import hourExpedient from "./hourExpedient";
+import { log } from "console";
 
 type Session = WASocket & {
   id?: number;
@@ -171,7 +172,7 @@ export const getBodyMessage = (msg: proto.IWebMessageInfo): string | null => {
       documentWithCaptionMessage: msg.message?.documentWithCaptionMessage?.message.documentMessage.caption,
     };
 
-    console.log(type);
+  
     
 
     const objKey = Object.keys(types).find(key => key === type);
@@ -261,16 +262,17 @@ const downloadMedia = async (msg: proto.IWebMessageInfo) => {
     msg.message?.videoMessage ||
     msg.message?.stickerMessage ||
     msg.message?.documentMessage ||
-    msg.message?.extendedTextMessage?.contextInfo?.quotedMessage?.imageMessage;
+    msg.message?.extendedTextMessage?.contextInfo?.quotedMessage?.imageMessage ||
+    msg.message?.documentWithCaptionMessage.message.documentMessage;
 
   // eslint-disable-next-line no-nested-ternary
-  const messageType = msg.message?.documentMessage
-    ? "document"
-    : mineType.mimetype.split("/")[0].replace("application", "document")
-    ? (mineType.mimetype
-        .split("/")[0]
-        .replace("application", "document") as MediaType)
-    : (mineType.mimetype.split("/")[0] as MediaType);
+
+  
+  
+  const messageType = 
+  msg.message?.documentMessage? "document" : 
+    mineType.mimetype.split("/")[0].replace("application", "document") ? 
+      (mineType.mimetype .split("/")[0] .replace("application", "document") as MediaType): (mineType.mimetype.split("/")[0] as MediaType);
 
   let stream;
   let contDownload = 0;
@@ -290,7 +292,7 @@ const downloadMedia = async (msg: proto.IWebMessageInfo) => {
           msg.message?.templateMessage?.fourRowTemplate?.imageMessage ||
           msg.message?.templateMessage?.hydratedTemplate?.imageMessage ||
           msg.message?.templateMessage?.hydratedFourRowTemplate?.imageMessage ||
-          msg.message?.interactiveMessage?.header?.imageMessage,
+          msg.message?.interactiveMessage?.header?.imageMessage || msg.message?.documentWithCaptionMessage.message.documentMessage,
         messageType
       );
     } catch (error) {
@@ -322,8 +324,8 @@ const downloadMedia = async (msg: proto.IWebMessageInfo) => {
     Sentry.captureException(new Error("ERR_WAPP_DOWNLOAD_MEDIA"));
     throw new Error("ERR_WAPP_DOWNLOAD_MEDIA");
   }
-  let filename = msg.message?.documentMessage?.fileName || "";
-
+  //let filename = msg.message?.documentMessage?.fileName || "";
+  let filename =  "";
   if (!filename) {
     const ext = mineType.mimetype.split("/")[1].split(";")[0];
     filename = `${new Date().getTime()}.${ext}`;
@@ -384,6 +386,8 @@ const verifyMediaMessage = async (
 
   const media = await downloadMedia(msg);
 
+  
+
   if (!media) {
     throw new Error("ERR_WAPP_DOWNLOAD_MEDIA");
   }
@@ -423,7 +427,6 @@ const verifyMediaMessage = async (
     dataJson: JSON.stringify(msg)
   };
 
-  console.log(messageData);
   
 
   await ticket.update({
@@ -804,14 +807,17 @@ const handleMessage = async (
     const msgType = getTypeMessage(msg);
 
     if (msgType === "protocolMessage") return; // Tratar isso no futuro para excluir msgs se vor REVOKE
-    const hasMedia =
+    const hasMedia = 
       msg.message?.audioMessage ||
       msg.message?.imageMessage ||
       msg.message?.videoMessage ||
       msg.message?.documentMessage ||
       msg.message.stickerMessage ||
       msg.message?.extendedTextMessage?.contextInfo?.quotedMessage
-        ?.imageMessage;
+        ?.imageMessage || msg.message?.documentWithCaptionMessage?.message.documentMessage;
+
+  
+    
 
     if (msg.key.fromMe) {
       if (/\u200e/.test(bodyMessage)) return;

@@ -1,5 +1,6 @@
 import AppError from "../../errors/AppError";
 import Chatbot from "../../models/Chatbot";
+import Queue from "../../models/Queue";
 
 interface ChatbotData {
   id?: number;
@@ -27,7 +28,14 @@ const UpdateChatBotServices = async (
   if (options) {
     await Promise.all(
       options.map(async bot => {
-        await Chatbot.upsert({ ...bot, chatbotId: chatbot.id });
+        if(bot.isAgent && typeof bot.name === "number"){
+          const fila = await Queue.findOne({
+            where: { id: bot.name}
+          });
+            await Chatbot.upsert({ ...bot, chatbotId: chatbot.id, name: fila.name, id_chatbot: bot.name });
+          }else{
+            await Chatbot.upsert({ ...bot, chatbotId: chatbot.id });
+          }
       })
     );
 

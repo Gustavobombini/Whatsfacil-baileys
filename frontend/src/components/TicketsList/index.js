@@ -185,8 +185,8 @@ const TicketsList = (props) => {
 	useEffect(() => {
 		const queueIds = queues.map((q) => q.id);
 		const filteredTickets = tickets.filter((t) => queueIds.indexOf(t.queueId) > -1);
-
-		if (profile === "user") {
+    				        
+		if (!user.queuesNull) {
 			dispatch({ type: "LOAD_TICKETS", payload: filteredTickets });
 		} else {
 			dispatch({ type: "LOAD_TICKETS", payload: tickets });
@@ -301,9 +301,8 @@ const TicketsList = (props) => {
           ) : (
             <>
               {ticketsList.map((ticket) => {
-				if(ticket.queueId || user.queuesNull )
-                	return <TicketListItem ticket={ticket} key={ticket.id} />
-			  })}
+                	  return <TicketListItem ticket={ticket} key={ticket.id} />
+			          })}
 			  
             </>
           )}

@@ -319,6 +319,9 @@ export const sayChatbot = async (
     return backTo;
   }
 
+
+  
+
   if (!getStageBot) {
     const queue = await ShowQueueService(queueId);
 
@@ -329,6 +332,16 @@ export const sayChatbot = async (
 
     console.log("!getStageBot", selectedOptions);
     const choosenQueue = queue.chatbots[+selectedOptions - 1];
+
+    console.log(queue.chatbots);
+    
+
+     if(choosenQueue?.isAgent){		
+      await UpdateTicketService({		
+        ticketData: { queueId: choosenQueue.id_chatbot },		
+        ticketId: ticket.id, 		
+      })
+    };
 
     if (!choosenQueue?.greetingMessage) {
       await DeleteDialogChatBotsServices(contact.id);
@@ -369,7 +382,15 @@ export const sayChatbot = async (
       ? bots.options[+selected - 1]
       : bots.options[0];
 
+      if(choosenQueue.isAgent){
+        await UpdateTicketService({		
+      	  ticketData: { queueId: choosenQueue.id_chatbot },		
+   	      ticketId: ticket.id, 		
+        })
+
     console.log("choosenQueue", choosenQueue);
+
+    
 
     if (!choosenQueue.greetingMessage) {
       await DeleteDialogChatBotsServices(contact.id);
@@ -396,4 +417,5 @@ export const sayChatbot = async (
       return send;
     }
   }
+}
 };

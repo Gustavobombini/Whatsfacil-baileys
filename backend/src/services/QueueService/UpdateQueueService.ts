@@ -69,7 +69,15 @@ const UpdateQueueService = async (
   if (chatbots) {
     await Promise.all(
       chatbots.map(async bot => {
-        await Chatbot.upsert({ ...bot, queueId: queue.id });
+        if(bot.isAgent && typeof bot.name === "number"){
+        
+          const fila = await Queue.findOne({
+            where: { id: bot.name}
+          });
+          await Chatbot.upsert({ ...bot, queueId: queue.id, name: fila.name, id_chatbot : bot.name });
+        }else{
+          await Chatbot.upsert({ ...bot, queueId: queue.id});
+        }
       })
     );
 

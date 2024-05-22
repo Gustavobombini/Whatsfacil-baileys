@@ -2,7 +2,7 @@ import { QueryInterface, DataTypes } from "sequelize";
 
 module.exports = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable("Contacts", {
+    return queryInterface.createTable("ContactsCategories", {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -13,17 +13,6 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: false
       },
-      number: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-      },
-      profilePicUrl: {
-        type: DataTypes.STRING
-      },
-      ContactsCategories: {
-        type: DataTypes.STRING
-      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false
@@ -31,11 +20,12 @@ module.exports = {
       updatedAt: {
         type: DataTypes.DATE,
         allowNull: false
-      }
+      },
+
     });
   },
 
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("Contacts");
+    return queryInterface.dropTable("ContactsCategories");
   }
 };

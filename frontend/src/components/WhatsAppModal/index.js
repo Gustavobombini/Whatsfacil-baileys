@@ -352,7 +352,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                     // className={classes.textoExpediente}
                     >
                       <TextField
-                        label={i18n.t("queueModal.form.outOfWorkMessage")}
+                        label="Messagem fora do expediente"
                         rows={4}
                         multiline
                         fullWidth
@@ -412,7 +412,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                           <TextField
                             className={classes.hora}
                             type="time"
-                            label={i18n.t("queueModal.form.startWorkHour")}
+                            label="Inicio de expediente"
                             name="startWorkHour"
                             value={startWorkHour}
                             onChange={(e) => setStartWorkHour(e.target.value)}
@@ -422,7 +422,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                           <TextField
                             className={classes.hora}
                             type="time"
-                            label={i18n.t("queueModal.form.endWorkHour")}
+                            label="Fim do expediente"
                             name="endWorkHour"
                             value={endWorkHour}
                             onChange={(e) => setEndWorkHour(e.target.value)}
@@ -459,7 +459,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                                   onChange={handleChange}
                                 />
                               }
-                              label={i18n.t("queueModal.form.monday")}
+                              label="Seg."
                               labelPlacement="end"
                             />
                             <FormControlLabel
@@ -471,7 +471,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                                   onChange={handleChange}
                                 />
                               }
-                              label={i18n.t("queueModal.form.tuesday")}
+                              label="Ter."
                               labelPlacement="end"
                             />
                             <FormControlLabel
@@ -483,7 +483,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                                   onChange={handleChange}
                                 />
                               }
-                              label={i18n.t("queueModal.form.wednesday")}
+                              label="Qua."
                               labelPlacement="end"
                             />
                             <FormControlLabel
@@ -495,7 +495,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                                   onChange={handleChange}
                                 />
                               }
-                              label={i18n.t("queueModal.form.thursday")}
+                              label="Qui."
                               labelPlacement="end"
                             />
                             <FormControlLabel
@@ -507,7 +507,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                                   onChange={handleChange}
                                 />
                               }
-                              label={i18n.t("queueModal.form.friday")}
+                              label="Sex."
                               labelPlacement="end"
                             />
                           </FormGroup>
@@ -525,7 +525,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                             <TextField
                               className={classes.hora}
                               type="time"
-                              label={i18n.t("queueModal.form.startWorkHour")}
+                              label="Inicio de expediente"
                               name="StartWorkHourWeekend"
                               value={startWorkHourWeekend}
                               onChange={(e) =>
@@ -537,7 +537,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                             <TextField
                               className={classes.hora}
                               type="time"
-                              label={i18n.t("queueModal.form.endWorkHour")}
+                              label="Fim do expediente"
                               name="EndWorkHourWeekend"
                               value={endWorkHourWeekend}
                               onChange={(e) =>
@@ -575,7 +575,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                                     onChange={handleChange}
                                   />
                                 }
-                                label={i18n.t("queueModal.form.saturday")}
+                                label="Sab."
                                 labelPlacement="end"
                               />
                               <FormControlLabel
@@ -587,7 +587,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                                     onChange={handleChange}
                                   />
                                 }
-                                label={i18n.t("queueModal.form.sunday")}
+                                label="Dom."
                                 labelPlacement="end"
                               />
                             </FormGroup>

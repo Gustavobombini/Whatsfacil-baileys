@@ -41,6 +41,15 @@ class Chatbot extends Model<Chatbot> {
   @Column
   isAgent: boolean;
 
+  @Column
+  id_chatbot: number
+
+  @Column
+  isQuestion: boolean;
+
+  @Column
+  responseQuestion: string;
+
   @BelongsTo(() => Chatbot)
   mainChatbot: Chatbot;
 

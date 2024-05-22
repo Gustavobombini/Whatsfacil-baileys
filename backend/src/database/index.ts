@@ -5,6 +5,7 @@ import Chatbot from "../models/Chatbot";
 import Contact from "../models/Contact";
 import ContactCustomField from "../models/ContactCustomField";
 import DialogChatBots from "../models/DialogChatBots";
+import ContactsCategories from "../models/ContactsCategories";
 // import dbConfig from "../config/database";
 import MassMessages from "../models/MassMessages";
 import Message from "../models/Message";
@@ -32,6 +33,7 @@ const models = [
   Message,
   Whatsapp,
   ContactCustomField,
+  ContactsCategories,
   Setting,
   Queue,
   WhatsappQueue,

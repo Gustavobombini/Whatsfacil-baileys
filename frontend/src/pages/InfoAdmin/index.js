@@ -59,6 +59,7 @@ const InfoAdmin = () => {
 
   const [dados, setDados] = useState([])
   const [queue, setQueue] = useState()
+  const [nullqueue, setQueuenull] = useState()
   const [whats, setWhats] = useState()
   const [users, setusers] = useState()
   const [data1, setData1] = useState()
@@ -74,11 +75,17 @@ const InfoAdmin = () => {
         setDados(data.data)
 
         const prevqueue = []
+        const prevnullqueue = []
 
         data.data.map((value)=> {
-          prevqueue.push(`${value.queue.name}`)
+          if(value.queue){
+            prevqueue.push(`${value.queue.name}`)
+          }else{
+            prevnullqueue.push(`ticket sem fila`)
+          }
         })
         const contagem = {};
+        
         const viewQueue = []
         prevqueue.forEach(item => {
           contagem[item] = (contagem[item] || 0) + 1;
@@ -87,6 +94,7 @@ const InfoAdmin = () => {
           viewQueue.push({name: item , value: contagem[item]})
         }  
         setQueue(viewQueue);
+        setQueuenull(prevnullqueue);
 
         const prevuser = []
 
@@ -218,17 +226,36 @@ const InfoAdmin = () => {
           Filas
         </Typography>
       <Grid container spacing={4} >
-          {queue? queue.map((value) =>
+          {
+            queue? queue.map((value) =>
             <Grid item >
-            <Paper className={classes.PaperBox} >
-              {value.name} : {value.value}
-            </Paper>
-          </Grid>
-          ) : <Grid item >
-          <Paper className={classes.PaperBox} >
-            -
-          </Paper>
-        </Grid>}
+              <Paper className={classes.PaperBox} >
+                {value.name} : {value.value}
+              </Paper>
+            </Grid>
+          ) :
+            <Grid item >
+              <Paper className={classes.PaperBox} >
+                -
+              </Paper>
+            </Grid>
+          }
+          {nullqueue? (
+            <Grid item >
+              <Paper className={classes.PaperBox} >
+                Sem fila: {nullqueue.length}
+              </Paper>
+            </Grid>
+          ) :
+            <Grid item >
+              <Paper className={classes.PaperBox} >
+                -
+              </Paper>
+            </Grid>
+          }
+          
+
+      
       </Grid>
 
 

@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Formik, FieldArray, Form, Field } from "formik";
 import { toast } from "react-toastify";
 
-import { FormControlLabel } from "@material-ui/core";
+import { FormControlLabel, MenuItem, Select } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
@@ -36,7 +36,7 @@ import ConfirmationModal from "../ConfirmationModal";
 
 import OptionsChatBot from "../ChatBots/options";
 import CustomToolTip from "../ToolTips";
-
+import useQueues from "../../hooks/useQueues";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -110,6 +110,9 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
 
   const [colorPickerModalOpen, setColorPickerModalOpen] = useState(false);
   const [queue, setQueue] = useState(initialState);
+  const [queues, setQueues] = useState([]);
+  const [allQueues, setAllQueues] = useState([]);
+  const { findAll: findAllQueues } = useQueues();
   const greetingRef = useRef();
   const [activeStep, setActiveStep] = React.useState(null);
   const [selectedQueue, setSelectedQueue] = useState(null);
@@ -118,6 +121,16 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
   const [isNameEdit, setIsNamedEdit] = React.useState(null);
   const [isGreetingMessageEdit, setGreetingMessageEdit] = React.useState(null);
 
+  useEffect(() => {
+    const loadQueues = async () => {
+      const list = await findAllQueues();
+      setAllQueues(list);
+      console.log(list);
+      setQueues(list);
+    }
+    loadQueues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     (async () => {
       if (!queueId) return;
@@ -425,22 +438,37 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
                                     </div>
                                   ) : (
                                     <>
-                                      <Field
-                                        as={TextField}
-                                        name={`chatbots[${index}].name`}
-                                        variant="standard"
-                                        color="primary"
-                                        disabled={isSubmitting}
-                                        autoFocus
-                                        error={
-                                          touched?.chatbots?.[index]?.name &&
-                                          Boolean(
-                                            errors.chatbots?.[index]?.name
-                                          )
-                                        }
-                                        className={classes.textField}
-                                      />
+                                    {values.chatbots[index].isAgent?(
 
+                                      <Field
+                                      as={Select}
+                                      name={`chatbots[${index}].name`}
+                                    >  
+                                      {queues.map((fila) => {  
+                                        console.log(queues)
+                                        return (                                  
+                                          <MenuItem key={fila.id} value={fila.id}>{fila.name}</MenuItem>
+                                        )
+                                      })}
+                                    </Field>
+                                    ):(
+                                      <Field
+                                      as={TextField}
+                                      name={`chatbots[${index}].name`}
+                                      variant="standard"
+                                      color="primary"
+                                      disabled={isSubmitting}
+                                      autoFocus
+                                      error={
+                                        touched?.chatbots?.[index]?.name &&
+                                        Boolean(
+                                          errors.chatbots?.[index]?.name
+                                        )
+                                      }
+                                      className={classes.textField}
+                                    />
+                                    )}
+                                      
                                       <FormControlLabel
                                         control={
                                           <Field

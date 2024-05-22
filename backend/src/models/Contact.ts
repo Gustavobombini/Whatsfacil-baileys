@@ -38,6 +38,9 @@ class Contact extends Model<Contact> {
   @Column
   profilePicUrl: string;
 
+  @Column
+  ContactsCategories: number;
+
   @Default(false)
   @Column
   isGroup: boolean;

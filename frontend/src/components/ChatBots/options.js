@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
@@ -8,7 +8,7 @@ import StepContent from "@material-ui/core/StepContent";
 import api from "../../services/api";
 import Typography from "@material-ui/core/Typography";
 import EditIcon from "@material-ui/icons/Edit";
-import { IconButton } from "@material-ui/core";
+import { IconButton, MenuItem, Select } from "@material-ui/core";
 import { Formik, Field, FieldArray } from "formik";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
 import SaveIcon from "@material-ui/icons/Save";
@@ -20,7 +20,11 @@ import CustomToolTip from "../ToolTips";
 import ConfirmationModal from "../ConfirmationModal";
 import { i18n } from "../../translate/i18n";
 import Switch from "@material-ui/core/Switch";
+import useQueues from "../../hooks/useQueues";
+
+
 import { FormControlLabel } from "@material-ui/core";
+
 
 const QueueSchema = Yup.object().shape({
   options: Yup.array()
@@ -67,6 +71,19 @@ export default function VerticalLinearStepper(props) {
   const [isGreetingMessageEdit, setGreetingMessageEdit] = React.useState(null);
   const [selectedQueue, setSelectedQueue] = React.useState(null);
   const [confirmModalOpen, setConfirmModalOpen] = React.useState(false);
+  const [queues, setQueues] = useState([]);
+  const [allQueues, setAllQueues] = useState([]);
+  const { findAll: findAllQueues } = useQueues();
+
+  useEffect(() => {
+    const loadQueues = async () => {
+      const list = await findAllQueues();
+      setAllQueues(list);
+      setQueues(list);
+    }
+    loadQueues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSaveBot = async (values) => {
     try {
@@ -142,8 +159,7 @@ export default function VerticalLinearStepper(props) {
       <ConfirmationModal
         title={
           selectedQueue &&
-          `${i18n.t("queues.confirmationModal.deleteTitle")} ${
-            selectedQueue.name
+          `${i18n.t("queues.confirmationModal.deleteTitle")} ${selectedQueue.name
           }?`
         }
         open={confirmModalOpen}
@@ -184,7 +200,7 @@ export default function VerticalLinearStepper(props) {
                           >
                             <StepLabel key={`${info.id}-options`}>
                               {isNameEdit !== index &&
-                              steps.options[index]?.name ? (
+                                steps.options[index]?.name ? (
                                 <div
                                   className={classes.greetingMessage}
                                   variant="body1"
@@ -213,6 +229,20 @@ export default function VerticalLinearStepper(props) {
                                 </div>
                               ) : (
                                 <>
+                                {values.options[index].isAgent?(
+                                  <Field
+                                    as={Select}
+                                    name={`options[${index}].name`}
+                                  >
+                                    {queues.map((queue) => {
+                                      
+                                      return (
+                                        <MenuItem key={queue.id} value={queue.id}>{queue.name}</MenuItem>
+                                      )
+                                    }
+                                    )}
+                                  </Field>
+                                ):(
                                   <Field
                                     as={TextField}
                                     name={`options[${index}].name`}
@@ -226,6 +256,9 @@ export default function VerticalLinearStepper(props) {
                                     }
                                     className={classes.textField}
                                   />
+                                )}
+                                  
+
 
                                   <FormControlLabel
                                     control={
@@ -238,7 +271,7 @@ export default function VerticalLinearStepper(props) {
                                         }
                                       />
                                     }
-                                    label="Atendente"
+                                    label="Filas"
                                   />
 
                                   <IconButton
@@ -280,17 +313,17 @@ export default function VerticalLinearStepper(props) {
 
                                       {!steps.options[index]
                                         ?.greetingMessage && (
-                                        <CustomToolTip
-                                          title="A mensagem é obrigatória para seguir ao próximo nível"
-                                          content="Se a mensagem não estiver definida, o bot não seguirá adiante"
-                                        >
-                                          <HelpOutlineOutlinedIcon
-                                            color="secondary"
-                                            style={{ marginLeft: "4px" }}
-                                            fontSize="small"
-                                          />
-                                        </CustomToolTip>
-                                      )}
+                                          <CustomToolTip
+                                            title="A mensagem é obrigatória para seguir ao próximo nível"
+                                            content="Se a mensagem não estiver definida, o bot não seguirá adiante"
+                                          >
+                                            <HelpOutlineOutlinedIcon
+                                              color="secondary"
+                                              style={{ marginLeft: "4px" }}
+                                              fontSize="small"
+                                            />
+                                          </CustomToolTip>
+                                        )}
 
                                       <IconButton
                                         size="small"

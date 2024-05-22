@@ -13,6 +13,7 @@ import CheckContactNumber from "../services/WbotServices/CheckNumber";
 import GetProfilePicUrl from "../services/WbotServices/GetProfilePicUrl";
 import SendWhatsAppMedia from "../services/WbotServices/SendWhatsAppMedia";
 import SendWhatsAppMessage from "../services/WbotServices/SendWhatsAppMessage";
+import UpdateTicketService from "../services/TicketServices/UpdateTicketService";
 
 type WhatsappData = {
   whatsappId: number;
@@ -23,6 +24,8 @@ type MessageData = {
   fromMe: boolean;
   read: boolean;
   quotedMsg?: Message;
+  closedTicket? : number;
+  queueTicket? : number;
 };
 
 interface ContactData {
@@ -80,7 +83,7 @@ const createContact = async (
 export const index = async (req: Request, res: Response): Promise<Response> => {
   const newContact: ContactData = req.body;
   const { whatsappId }: WhatsappData = req.body;
-  const { body, quotedMsg }: MessageData = req.body;
+  const { body, quotedMsg, closedTicket, queueTicket }: MessageData = req.body;
   const medias = req.files as Express.Multer.File[];
 
   newContact.number = newContact.number.replace("-", "").replace(" ", "");
@@ -108,6 +111,19 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
   } else {
     await SendWhatsAppMessage({ body, ticket: contactAndTicket, quotedMsg });
   }
+
+  setTimeout(async () => {
+    if(queueTicket){
+      await UpdateTicketService({ticketId: contactAndTicket.id,ticketData: { queueId : queueTicket }});
+    }
+  }, 500);
+
+  
+  setTimeout(async () => {
+    if(closedTicket == 1){
+      await UpdateTicketService({ticketId: contactAndTicket.id,ticketData: { status : "closed" }});
+    }
+  }, 500);
 
   return res.send();
 };

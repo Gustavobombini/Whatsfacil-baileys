@@ -18,17 +18,17 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     include: [
       {
         model: Queue,
-        required: true,
+        
         // Aqui você pode adicionar mais opções, como where, order, etc. para a associação
       },
       {
         model: User, // Modelo da segunda tabela relacionada
-        required: true, // INNER JOIN
+         // INNER JOIN
         // Aqui você pode adicionar mais opções, como where, order, etc. para a associação
       },
       {
         model: Whatsapp, // Modelo da segunda tabela relacionada
-        required: true, // INNER JOIN
+        // INNER JOIN
         // Aqui você pode adicionar mais opções, como where, order, etc. para a associação
       }
     ],

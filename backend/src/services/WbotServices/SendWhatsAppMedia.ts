@@ -93,7 +93,14 @@ const SendWhatsAppMedia = async ({
         fileName: media.originalname,
         mimetype: media.mimetype
       };
-    } else {
+    }else if (media.path.slice(-3) === "pdf") {
+      options = {
+        document: fs.readFileSync(pathMedia),
+        caption: body,
+        fileName: media.originalname,
+        mimetype: 'application/pdf'
+      };
+    }   else {
       options = {
         image: fs.readFileSync(pathMedia),
         caption: body

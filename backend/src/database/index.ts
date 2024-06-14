@@ -21,6 +21,7 @@ import User from "../models/User";
 import UserQueue from "../models/UserQueue";
 import Whatsapp from "../models/Whatsapp";
 import WhatsappQueue from "../models/WhatsappQueue";
+import chatinternal from "../models/ChatInternal";
 // eslint-disable-next-line
 const dbConfig = require("../config/database");
 
@@ -47,7 +48,8 @@ const models = [
   TicketTag,
   SettingMessage,
   MassMessages,
-  BaileysSessions
+  BaileysSessions,
+  chatinternal
 ];
 
 sequelize.addModels(models);

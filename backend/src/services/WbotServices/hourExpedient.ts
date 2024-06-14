@@ -1,6 +1,6 @@
-import ListWhatsAppsService from "../WhatsappService/ListWhatsAppsService";
+import ShowWhatsAppService from "../WhatsappService/ShowWhatsAppService";
 
-const hourExpedient = async () => {
+const hourExpedient = async (whatsappId) => {
   const data = new Date();
   const weekDay = new Date().toLocaleDateString("en-US", {
     weekday: "long"
@@ -8,11 +8,11 @@ const hourExpedient = async () => {
   const hora = data.getHours();
   const min = data.toLocaleString("en-US", { minute: "2-digit" });
   const horaAtual = `${(hora < 10 ? "0" : "") + hora}:${min}`;
-  const workHour = await ListWhatsAppsService();
+  const value = await ShowWhatsAppService(whatsappId);
   const weekDays: string[] = [];
   let resulta = "";
 
-  workHour.map(value => {
+
     {
       value.monday ? weekDays.push("Monday") : "";
     }
@@ -43,7 +43,7 @@ const hourExpedient = async () => {
       value.startWorkHourWeekend <= horaAtual &&
       value.endWorkHourWeekend >= horaAtual;
     // Verifica se é a conexão padrão , se esta definido um expediente e se é o dia na semana definido para usar expediente
-    if (value.isDefault === true && value.defineWorkHours) {
+    if (value.defineWorkHours) {
       if (verifyDay) {
         // verifica se é fim de semana e esta dentro do expediente definido
         if (
@@ -73,7 +73,7 @@ const hourExpedient = async () => {
       // console.log("Horario Expediente Desativado");
       resulta = "true";
     }
-  });
+ 
   if (resulta === "true") {
     return true;
   }

@@ -63,6 +63,13 @@ const SendWhatsAppMedia = async ({
         fileName: media.originalname
         // gifPlayback: true
       };
+    } else if (media.path.slice(-3) === "ogg") {
+      const namefile = media.originalname.split('.');
+      options = {
+        audio: fs.readFileSync(pathMedia),
+        fileName:  namefile[0] + ".mp3",
+        mimetype: 'audio/mp4'
+      };
     } else if (typeMessage === "audio") {
       const typeAudio = media.originalname.includes("audio-record-site");
       if (typeAudio) {

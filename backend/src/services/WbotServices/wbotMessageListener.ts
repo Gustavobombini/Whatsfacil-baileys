@@ -879,7 +879,11 @@ const handleMessage = async (
       await verifyMessage(msg, ticket, contact);
     }
 
-    const checkExpedient = await hourExpedient();
+    const checkExpedient = await hourExpedient(whatsapp.id);
+
+    console.log(checkExpedient);
+    
+
     if (checkExpedient) {
       if (
         !ticket.queue &&

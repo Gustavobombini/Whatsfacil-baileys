@@ -362,8 +362,9 @@ const MessagesList = ({ ticketId, isGroup }) => {
   useEffect(() => {
     const socket = openSocket();
 
-    socket.on("connect", () => socket.emit("joinChatBox", ticketId));
-
+    //socket.on("connect", () => socket.emit("joinChatBox", ticketId));
+    socket.on("ready", () => socket.emit("joinChatBox", ticketId));
+    
     socket.on("appMessage", (data) => {
       if (data.action === "create") {
         dispatch({ type: "ADD_MESSAGE", payload: data.message });
@@ -429,7 +430,7 @@ const MessagesList = ({ ticketId, isGroup }) => {
 
       return <LocationPreview image={imageLocation} link={linkLocation} description={descriptionLocation} />
     }
-    else if (message.mediaType === "vcard") {
+    else if (message.mediaType === "vcard" || message.mediaType === "contactMessage") {
       //console.log("vcard")
       //console.log(message)
       let array = message.body.split("\n");
@@ -615,8 +616,8 @@ const MessagesList = ({ ticketId, isGroup }) => {
                     {message.contact?.name}
                   </span>
                 )}
-                {(message.mediaUrl || message.mediaType === "location" || message.mediaType === "vcard"
-                  //|| message.mediaType === "multi_vcard" 
+                {(message.mediaUrl || message.mediaType === "location" || message.mediaType === "vcard" || message.mediaType === "contactMessage"
+                  //|| message.mediaType === "multi_vcard"  
                 ) && checkMessageMedia(message)}
                 <div className={classes.textContentItem}>
                   {message.quotedMsg && renderQuotedMessage(message)}
@@ -644,7 +645,7 @@ const MessagesList = ({ ticketId, isGroup }) => {
                 >
                   <ExpandMore />
                 </IconButton>
-                {(message.mediaUrl || message.mediaType === "location" || message.mediaType === "vcard"
+                {(message.mediaUrl || message.mediaType === "location" || message.mediaType === "vcard" || message.mediaType === "contactMessage"
                   //|| message.mediaType === "multi_vcard" 
                 ) && checkMessageMedia(message)}
                 <div

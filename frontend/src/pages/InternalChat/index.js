@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect, useContext }  from 'react';
 import { useHistory, useParams } from "react-router-dom";
-
 import { Input, colors, makeStyles } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import PersonIcon from '@material-ui/icons/Person';
@@ -146,12 +145,9 @@ const InternalChat = () => {
     const [selectedContact, setSelectedContact] = useState(null);
     const [contact , setContacts] = useState([])
     const { user } = useContext(AuthContext);
-  
 
     useEffect(() => {
-        //----------------- LISTA DE USUARIOS ------------\\
-
-        const fetchUsers = async () => {
+      const fetchUsers = async () => {
           try {
             const { data } = await api.get("/users/");
             setContacts(data.users)
@@ -160,11 +156,8 @@ const InternalChat = () => {
           }
         };
         fetchUsers(); 
-
     }, []);
 
-        
-    
     return (
         <div className={classes.chatPage}>
             <div className={classes.contactList}>
@@ -198,7 +191,6 @@ function ChatWindow({ contact }) {
     const messagesRef = useRef();
     const { user } = useContext(AuthContext);
     const history = useHistory();
-    const { Id } = useParams();
 
     const SendMsg = async (event) => {
       event.preventDefault(); 
@@ -226,7 +218,6 @@ function ChatWindow({ contact }) {
     useEffect(() => {
       const handleReceiveMessage = (data) => {
         if(data.para === user.id && data.de === contact.id ){
-
           const newMsg = {
             inputValue : data.inputValue,
             de : data.de,

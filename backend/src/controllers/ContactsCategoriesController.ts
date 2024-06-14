@@ -9,9 +9,6 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     order: [["id", "ASC"]],
   });
 
-console.log(data);
-
-
   return res.json({data});
 }
 
@@ -21,9 +18,8 @@ console.log(data);
 export const store = async (req: Request, res: Response): Promise<Response> => {
     const {name} = req.body;
 
-     await ContactsCategories.create({name});
-
-
+    await ContactsCategories.create({name});
+    
     return res.json({});
 
 };

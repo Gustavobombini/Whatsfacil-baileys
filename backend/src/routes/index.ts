@@ -18,6 +18,7 @@ import whatsappRoutes from "./whatsappRoutes";
 import whatsappSessionRoutes from "./whatsappSessionRoutes";
 import infoRoutes from "./infoRoutes";
 import ContactsCategoriesRoutes from "./ContactsCategoriesRoutes";
+import chatInternalRoutes from "./chatInternalRoutes";
 
 
 const routes = Router();
@@ -41,5 +42,6 @@ routes.use("/bulkMessage", bulkMessageRoutes);
 routes.use(settingMessageRoutes);
 routes.use(infoRoutes)
 routes.use(ContactsCategoriesRoutes)
+routes.use(chatInternalRoutes)
 
 export default routes;

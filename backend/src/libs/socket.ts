@@ -81,6 +81,17 @@ export const initIO = (httpServer: Server): SocketIO => {
     socket.on("disconnect", () => {
       logger.info("Client disconnected");
     });
+
+    socket.on("chat", (data: any) => {
+      io.emit("receive_msg", {
+          inputValue: data.inputValue,
+          de : data.de,
+          para : data.para,
+          deName: data.deName,
+          data: data.data
+        });
+      logger.info(`A client joined chat `);
+    });
     
     socket.emit("ready");
   });

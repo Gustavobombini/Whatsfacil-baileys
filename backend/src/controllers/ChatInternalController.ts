@@ -5,13 +5,13 @@ import { log } from "console";
 
 ''
 export const index = async (req: Request, res: Response): Promise<Response> => {
-  const {para , de} = req.query as any
+  const {sent_user , receiving_user} = req.query as any
   
-     const  data = await ChatInternal.findAll({
+  const  data = await ChatInternal.findAll({
     where:{
       [Op.or]: [
-        { para: para, de: de }, 
-        { para: de, de: para }, 
+        { receiving_user: receiving_user, sent_user: sent_user }, 
+        { receiving_user: sent_user, sent_user: receiving_user }, 
       ],
     },
     order: [['id', 'ASC']],
@@ -26,6 +26,18 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     const create = ChatInternal.create(data)
 
     return res.json({create});
+};
+
+export const file = async (req: Request, res: Response): Promise<Response> => {
+  const data = req.body;
+  const file = req.files as Express.Multer.File[];
+
+  console.log(file);
+  console.log(data);
+  
+  
+
+  return res.json({file});
 };
 
 

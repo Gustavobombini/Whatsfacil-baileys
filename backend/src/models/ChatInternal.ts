@@ -21,16 +21,22 @@ class chatinternal extends Model<chatinternal> {
   id: number;
 
   @Column
-  inputValue: string;
+  message: string;
 
   @Column
   data: string;
 
   @Column
-  de: number;
+  sent_user: number;
 
   @Column
-  para: number;
+  receiving_user: number;
+
+  @Column
+  type_message: string;
+
+  @Column
+  viewed: number;
 
   @CreatedAt
   createdAt: Date;

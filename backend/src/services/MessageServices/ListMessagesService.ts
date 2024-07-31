@@ -1,6 +1,8 @@
+import { boolean } from "yup";
 import AppError from "../../errors/AppError";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
+import Whatsapp from "../../models/Whatsapp";
 import ShowTicketService from "../TicketServices/ShowTicketService";
 
 interface Request {
@@ -25,8 +27,21 @@ const ListMessagesService = async ({
     throw new AppError("ERR_NO_TICKET_FOUND", 404);
   }
 
-  const limit = 20;
+  const limit = 100;
   const offset = limit * (+pageNumber - 1);
+  const viewOthers = Number(process.env.VIEW_MSG_OTHERS_NUMBER);
+  const viewOthersQueue = Number(process.env.VIEW_MSG_OTHERS_QUEUE);
+
+
+  const viewOthersClosed = Number(process.env.VIEW_MSG_OTHERS_NUMBER_CLOSED);
+  let viewClosed = false;
+ 
+  if(ticket.status == 'closed'){
+    if(viewOthersClosed == 1){
+      viewClosed = true;
+    }
+  }
+
 
     const { count, rows: messages } = await Message.findAndCountAll({
         limit,
@@ -39,9 +54,12 @@ const ListMessagesService = async ({
             },
             {
                 model: Ticket,
-                where: { contactId: ticket.contactId },
+                where: { contactId: ticket.contactId, 
+                  ...( (viewOthers != 1 || (viewClosed  && viewOthers != 1))  && { whatsappId: ticket.whatsappId }),
+                  ...(viewOthersQueue != 1 && { queueId: ticket.queueId })
+                  },
                 required: true
-            }
+            },
         ],
         offset,
         order: [["createdAt", "DESC"]]

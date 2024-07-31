@@ -83,13 +83,7 @@ export const initIO = (httpServer: Server): SocketIO => {
     });
 
     socket.on("chat", (data: any) => {
-      io.emit("receive_msg", {
-          inputValue: data.inputValue,
-          de : data.de,
-          para : data.para,
-          deName: data.deName,
-          data: data.data
-        });
+      io.emit("receive_msg", data);
       logger.info(`A client joined chat `);
     });
     

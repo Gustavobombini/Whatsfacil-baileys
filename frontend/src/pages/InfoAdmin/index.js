@@ -99,8 +99,11 @@ const InfoAdmin = () => {
         const prevuser = []
 
         data.data.map((value)=> {
-          prevuser.push(`${value.user.name}`)
+          if(value.user){
+            prevuser.push(`${value.user.name}`)
+          }
         })
+
         const contagemuser = {};
         const viewuser = []
         prevuser.forEach(item => {
@@ -115,7 +118,9 @@ const InfoAdmin = () => {
         const prevwhats = []
 
         data.data.map((value)=> {
-          prevwhats.push(`${value.whatsapp.name}`)
+          if(value.whatsapp){
+            prevwhats.push(`${value.whatsapp.name}`)
+          }
         })
         const contagemwhats = {};
         const viewwhats = []

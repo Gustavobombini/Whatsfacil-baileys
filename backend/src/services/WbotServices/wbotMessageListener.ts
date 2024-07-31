@@ -980,6 +980,10 @@ const filterMessages = (msg: WAMessage): boolean => {
 
 const wbotMessageListener = async (wbot: Session): Promise<void> => {
   try {
+    wbot.ev.on("messaging-history.set", ({ messages }) => {
+      console.log('got messages', messages)
+  })
+
     wbot.ev.on("messages.upsert", async (messageUpsert: ImessageUpsert) => {
       const messages = messageUpsert.messages
         .filter(filterMessages)

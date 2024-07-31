@@ -2,14 +2,14 @@ import { QueryInterface, DataTypes } from "sequelize";
 
 module.exports = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable("ChatInternal", {
+    return queryInterface.createTable("chatinternal", {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
       },
-      inputValue: {
+      message: {
         type: DataTypes.STRING,
         allowNull: false
       },
@@ -17,11 +17,19 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: false
       },
-      de: {
+      sent_user: {
         type: DataTypes.INTEGER,
         allowNull: false
       },
-      para: {
+      receiving_user: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      type_message: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      viewed: {
         type: DataTypes.INTEGER,
         allowNull: false
       },
@@ -38,6 +46,6 @@ module.exports = {
   },
 
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable("ChatInternal");
+    return queryInterface.dropTable("chatinternal");
   }
 };

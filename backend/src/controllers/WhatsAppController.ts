@@ -8,6 +8,7 @@ import DeleteWhatsAppService from "../services/WhatsappService/DeleteWhatsAppSer
 import ListWhatsAppsService from "../services/WhatsappService/ListWhatsAppsService";
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
+import AppError from "../errors/AppError";
 
 interface WhatsappData {
   name: string;
@@ -66,6 +67,13 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     sunday,
     defineWorkHours
   }: WhatsappData = req.body;
+
+    const WhatsApps = await ListWhatsAppsService();
+    
+    if (WhatsApps.length >= Number(process.env.CONNECTIONS_LIMIT)) {
+      throw new AppError("Voçê não pode criar novas conexões", 403);
+    }
+
 
   const { whatsapp, oldDefaultWhatsapp } = await CreateWhatsAppService({
     name,

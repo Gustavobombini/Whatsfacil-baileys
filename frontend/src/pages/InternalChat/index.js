@@ -6,6 +6,7 @@ import openSocket from "../../services/socket-io";
 const InternalChat = () => {
 
   const [contact , setContacts] = useState([])
+  const [loadUpload , setloadUpload] = useState(false)
   const { user } = useContext(AuthContext);
   const [selectedContact, setSelectedContact] = useState(null);
   const [msg, setMsg] = useState([]);
@@ -31,7 +32,9 @@ const InternalChat = () => {
         const loadMsg = await api.get("/ChatInternal", {
           params: { sent_user: user.id, receiving_user: selectedContact.id } 
         });
+        
 
+        setMsg([]);
         if(loadMsg.data.data.length > 0){
           loadMsg.data.data.map( item => {
             console.log(item);
@@ -46,6 +49,7 @@ const InternalChat = () => {
       }
 
     }
+
 
     fetchMsg()
   }, [selectedContact]);
@@ -66,9 +70,11 @@ const InternalChat = () => {
 
   const uploadFiles = async (e) => {
 
-    const file = e.target.files
+    const files = e.target.files; 
+    const file = files[0];
+    setloadUpload(true)
 
-    const msg = async (name) =>{
+    const msg = async (name, nameOriginal) =>{
       const data = new Date(Date.now()).toLocaleString().split(',');
       const dataH= data[1].split(":");
       const dataD= data[0].split("/");
@@ -80,9 +86,12 @@ const InternalChat = () => {
         receiving_user : selectedContact.id,
         data : dataMsg,
         type_message : 'file',
-        viewed :0
+        viewed :0,
+        filename : nameOriginal
       }
   
+      await api.post("/ChatInternal", newMsg);
+
       setMsg((msgList) => [...msgList, newMsg])
       
     }
@@ -93,15 +102,14 @@ const InternalChat = () => {
     try{
       
       const response =  await api.post('/ChatInternal-file', formData);
-      console.log(response);
+      console.log(response.data.file[0]);
+      msg(response.data.file[0].filename,response.data.file[0].originalname )
+      
+      setloadUpload(false)
 
     }catch{
       console.log("não foi possivel enviar o arquivo");
     }
-
-
-
-    console.log(file);
   }
 
   const SendMsg = async (event) => {
@@ -155,7 +163,8 @@ const InternalChat = () => {
                 <div className='d-flex justify-content-around w-100 mb-5 border-bottom'>
                   <h3>Contatos</h3>
                 </div>
-                <div className='justify-content-around d-grid w-100'>
+                <div className='justify-content-around d-grid w-100' style={{maxHeight: '66vh', overflowY: 'scroll'
+                }}>
                   {contact.map((contacts) => {
                     if(contacts.id !== user.id)
                       return <button type="button" className={`btn mt-2 ${selectedContact && selectedContact.id === contacts.id   ? 'btn-danger' : 'btn-success'}`} onClick={() => setSelectedContact(contacts)}>{contacts.name}</button>
@@ -184,7 +193,16 @@ const InternalChat = () => {
                                     : 
                                   <div className='justify-content-end d-flex mb-2 text-right ml-auto' >
                                     <div className='alert alert-secondary' role='alert' style={{width: 'max-content', maxWidth: '-moz-available'}}>
-                                      {item.message}
+                                      {item.type_message === 'file' ? (
+                                        <div>
+                                          <div className='row'>
+                                            <a target="_blank" href={item.message} ><button className='btn btn-info' style={{width: '-moz-available'}}>Ver Anexo</button></a>
+                                          </div>
+                                          <div className='row mt-2'>
+                                           <label>{item.filename}</label>
+                                          </div>
+                                        </div>
+                                      ):item.message }    
                                     </div>
                                   </div>
                             ))}
@@ -192,23 +210,28 @@ const InternalChat = () => {
                         </div>
                       </div>
 
-                        <div className='mt-auto'>
-                          <form onSubmit={SendMsg}>
-                          <div className='input-group'>
-                            <input type='text' className='form-control' ref={inputMsg} />
-                            <div className='input-group-append'>
-                              <button className='btn btn-outline-secondary' type='submit'>Enviar</button>
-                              <label className='btn btn-outline-secondary' htmlFor="upload-button">Anexo</label>
-                              <input
-                                type="file"
-                                id="upload-button"
-                                onChange={uploadFiles}
-                                style={{display: 'none'}}
-                              />
-                            </div>
+                          <div className='mt-auto'>
+                              {!loadUpload ?
+                              <form onSubmit={SendMsg}>
+                              <div className='input-group'>
+                                <input type='text' className='form-control' ref={inputMsg} />
+                                <div className='input-group-append'>
+                                  <button className='btn btn-outline-secondary' type='submit'>Enviar</button>
+                                  <label className='btn btn-outline-secondary' htmlFor="upload-button">Anexo</label>
+                                  <input
+                                    type="file"
+                                    id="upload-button"
+                                    onChange={uploadFiles}
+                                    style={{display: 'none'}}
+                                  />
+                                </div>
+                              </div>
+                            </form>
+                            :   
+                            <label>Carregando Arquivo...</label>
+                          }
                           </div>
-                         </form>
-                        </div>
+                          
                    </div>
                 ) :(
                   <div className='d-flex justify-content-center'>

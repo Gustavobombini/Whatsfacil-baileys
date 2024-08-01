@@ -6,6 +6,7 @@ import {
   Model,
   PrimaryKey,
   AutoIncrement,
+  BeforeUpdate,
 } from "sequelize-typescript";
 
 @Table({
@@ -17,6 +18,7 @@ import {
 class chatinternal extends Model<chatinternal> {
   @PrimaryKey
   @AutoIncrement
+  
   @Column
   id: number;
 
@@ -37,7 +39,10 @@ class chatinternal extends Model<chatinternal> {
 
   @Column
   viewed: number;
-
+  
+  @Column
+  filename: string;
+  
   @CreatedAt
   createdAt: Date;
 

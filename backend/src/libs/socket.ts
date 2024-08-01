@@ -46,7 +46,7 @@ export const initIO = (httpServer: Server): SocketIO => {
           // only admin and the current user of the ticket
           // can join the message channel of it.
           
-            logger.debug(`User ${user.id} joined ticket ${ticketId} channel`);
+            logger.debug(`User joined ticket ${ticketId} channel`);
             socket.join(ticketId);
           
         },
@@ -59,12 +59,12 @@ export const initIO = (httpServer: Server): SocketIO => {
     socket.on("joinNotification", () => {
       if (user.profile === "admin") {
         // admin can join all notifications
-        logger.debug(`Admin ${user.id} joined the notification channel.`);
+        logger.debug(`Admin } joined the notification channel.`);
         socket.join("notification");
       } else {
         // normal users join notifications of the queues they participate
         user.queues.forEach(queue => {
-          logger.debug(`User ${user.id} joined queue ${queue.id} channel.`);
+          logger.debug(`User joined queue ${queue.id} channel.`);
           socket.join(`queue-${queue.id}-notification`);
         });
       }
@@ -73,7 +73,7 @@ export const initIO = (httpServer: Server): SocketIO => {
     socket.on("joinTickets", (status: string) => {
 
         // only admin can join the notifications of a particular status
-        logger.debug(`Admin ${user.id} joined ${status} tickets channel.`);
+        logger.debug(`Admin joined ${status} tickets channel.`);
         socket.join(`${status}`);
   
     });

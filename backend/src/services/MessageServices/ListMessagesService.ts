@@ -30,14 +30,17 @@ const ListMessagesService = async ({
   const limit = 100;
   const offset = limit * (+pageNumber - 1);
   
-  const viewOthers = Number(process.env.VIEW_MSG_OTHERS_NUMBER);
-  const viewOthersQueue = Number(process.env.VIEW_MSG_OTHERS_QUEUE);
-  const viewOthersClosed = Number(process.env.VIEW_MSG_OTHERS_NUMBER_CLOSED);
+  const viewOthers = process.env.VIEW_MSG_OTHERS_NUMBER;
+  const viewOthersQueue = process.env.VIEW_MSG_OTHERS_QUEUE;
+  const viewOthersClosed = process.env.VIEW_MSG_OTHERS_NUMBER_CLOSED;
 
   let viewClosed = false;
+
+  console.log(viewOthers);
+  
  
   if(ticket.status == 'closed'){
-    if(viewOthersClosed == 2){
+    if(viewOthersClosed == '2'){
       viewClosed = true;
     }
   }
@@ -55,8 +58,9 @@ const ListMessagesService = async ({
             {
                 model: Ticket,
                 where: { contactId: ticket.contactId, 
-                  ...((viewOthers == 2 || viewClosed)  && { whatsappId: ticket.whatsappId }),
-                  ...((viewOthersQueue == 1 || viewClosed)  && { queueId: ticket.queueId })
+				          ...(viewClosed && { whatsappId: ticket.whatsappId }),
+                  ...(viewOthers == '2' && { whatsappId: ticket.whatsappId }),
+                  ...(viewOthersQueue == '2'  && { queueId: ticket.queueId })
                   },
                 required: true
             },

@@ -27,6 +27,7 @@ import { AuthContext } from "../context/Auth/AuthContext";
 import BackdropLoading from "../components/BackdropLoading";
 import { i18n } from "../translate/i18n";
 import openSocket from "../services/socket-io";
+import { toast } from "react-toastify";
 
 
 
@@ -118,17 +119,20 @@ const LoggedInLayout = ({ children }) => {
       const urlAtual = window.location.href;
       const URL = urlAtual.split('/');
       const idUrl = URL[URL.length - 1];
-
-      Notification.requestPermission().then(function (permission) {})
-      if(data.para === user.id &&  idUrl != data.de){ 
-          const notification = new Notification(data.deName , {
-          body: data.inputValue
-        });
-    }
+      
+      if(data.receiving_user === user.id &&  idUrl != data.sent_user){
+          if(data.type_message === 'file'){
+            toast.success(`${data.sent_name}: Enviou um Anexo`);
+          }else{
+            toast.success(`${data.sent_name}: ${data.message}`);
+          }
+      }
     };
+
     socket.on("receive_msg", handleReceiveMessage);
+    
     return () => {
-    socket.off("receive_msg", handleReceiveMessage);
+      socket.off("receive_msg", handleReceiveMessage);
     };
 }, [socket]);
 

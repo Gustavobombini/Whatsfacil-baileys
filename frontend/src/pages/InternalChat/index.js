@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect, useContext }  from 'react';
+import { useHistory, useParams } from "react-router-dom";
 import api from "../../services/api";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import openSocket from "../../services/socket-io";
+import { toast } from 'react-toastify';
 
 const InternalChat = () => {
 
@@ -13,6 +15,7 @@ const InternalChat = () => {
   const inputMsg = useRef(null);
   const divMsgEndRef = useRef(null);
   const socket = openSocket();
+  const history = useHistory();
 
   socket.on("connect", () => {
     console.log("Conectado ao servidor Socket.IO");
@@ -87,13 +90,14 @@ const InternalChat = () => {
         data : dataMsg,
         type_message : 'file',
         viewed :0,
-        filename : nameOriginal
+        filename : nameOriginal,
+        sent_name: user.name
       }
   
       await api.post("/ChatInternal", newMsg);
 
       setMsg((msgList) => [...msgList, newMsg])
-      
+      socket.emit('chat', newMsg);
     }
       
     const formData = new FormData();
@@ -115,6 +119,8 @@ const InternalChat = () => {
   const SendMsg = async (event) => {
     event.preventDefault(); 
 
+    history.push(`/internalchat/${selectedContact.id}`);
+
     const data = new Date(Date.now()).toLocaleString().split(',');
     const dataH= data[1].split(":");
     const dataD= data[0].split("/");
@@ -128,7 +134,8 @@ const InternalChat = () => {
         receiving_user : selectedContact.id,
         data : dataMsg,
         type_message : 'text',
-        viewed :0
+        viewed :0,
+        sent_name: user.name
       }
 
       setMsg((msgList) => [...msgList, newMsg])
@@ -187,7 +194,16 @@ const InternalChat = () => {
                               item.receiving_user === user.id ?
                                   <div className='msg-left mb-2 text-left'>
                                     <div className='alert alert-primary w-' role='alert' style={{width: 'max-content' , maxWidth: '-moz-available'}}>
-                                      {item.message}
+                                    {item.type_message === 'file' ? (
+                                        <div>
+                                          <div className='row'>
+                                            <a target="_blank" href={item.message} ><button className='btn btn-info' style={{width: '-moz-available'}}>Ver Anexo</button></a>
+                                          </div>
+                                          <div className='row mt-2'>
+                                           <label>{item.filename}</label>
+                                          </div>
+                                        </div>
+                                      ):item.message }    
                                     </div>
                                   </div>
                                     : 

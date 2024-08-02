@@ -177,7 +177,7 @@ const MainListItems = (props) => {
           <ListItemLink
             to="/internalchat"
             primary="Chat Interno"
-          
+            icon={< ChatBubbleOutlineIcon/>}
           />
   
           <ListItemLink

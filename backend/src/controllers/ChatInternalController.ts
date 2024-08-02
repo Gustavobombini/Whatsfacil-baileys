@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ChatInternal from "../models/ChatInternal";
 import { Op, Sequelize } from "sequelize";
 import { log } from "console";
+import AppError from "../errors/AppError";
 
 ''
 export const index = async (req: Request, res: Response): Promise<Response> => {

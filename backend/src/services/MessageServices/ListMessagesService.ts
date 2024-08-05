@@ -59,7 +59,7 @@ const ListMessagesService = async ({
                 model: Ticket,
                 where: { contactId: ticket.contactId, 
 				          ...(viewClosed && { whatsappId: ticket.whatsappId }),
-                  ...(viewOthers == '2' && { whatsappId: ticket.whatsappId }),
+                  ...((viewOthers == '2' && ticket.status != 'closed') && { whatsappId: ticket.whatsappId }),
                   ...(viewOthersQueue == '2'  && { queueId: ticket.queueId })
                   },
                 required: true

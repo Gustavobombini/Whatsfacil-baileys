@@ -5,6 +5,8 @@ import { AuthContext } from "../../context/Auth/AuthContext";
 import openSocket from "../../services/socket-io";
 import { toast } from 'react-toastify';
 
+import { Badge } from "@material-ui/core";
+
 const InternalChat = () => {
 
   const [contact , setContacts] = useState([])
@@ -186,7 +188,15 @@ const InternalChat = () => {
                 }}>
                   {contact.map((contacts) => {
                     if(contacts.id !== user.id)
-                      return <button type="button" className={`btn mt-2 ${selectedContact && selectedContact.id === contacts.id ? 'btn-danger' : 'btn-success'} ${contacts.viewed > 0 ? 'btn-warning' : 'btn-success'}`} onClick={() => setSelectedContact(contacts)}>{contacts.name}</button>
+                      return <button 
+                                type="button" 
+                                className={`btn mt-2 ${selectedContact && selectedContact.id === contacts.id ? 'btn-danger' : 'btn-success'}`} 
+                                onClick={() => setSelectedContact(contacts)}
+                              >
+                                <Badge badgeContent={contacts.viewed > 0 ? "!" : 0} color="error">
+                                  {contacts.name}
+                                </Badge>
+                              </button>
                    
                   })}
                 </div>

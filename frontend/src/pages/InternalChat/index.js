@@ -40,20 +40,18 @@ const InternalChat = () => {
         setMsg([]);
         if(loadMsg.data.data.length > 0){
           loadMsg.data.data.map( item => {
-            console.log(item);
             setMsg((msgList) => [...msgList, item])
           })
         }
 
-        console.log(loadMsg);
-
+        fetchUsers()
       }catch{
         console.log('Erro ao carregar mensagens');
       }
 
     }
 
-
+    setContacts([]);
     fetchMsg()
   }, [selectedContact]);
 
@@ -63,7 +61,6 @@ const InternalChat = () => {
       if(data.receiving_user === user.id && data.sent_user === selectedContact.id){
         setMsg((msgList) => [...msgList, data])
       }
-     console.log(data);
     };
     socket.on("receive_msg", handleReceiveMessage);
     return () => {
@@ -106,7 +103,6 @@ const InternalChat = () => {
     try{
       
       const response =  await api.post('/ChatInternal-file', formData);
-      console.log(response.data.file[0]);
       msg(response.data.file[0].filename,response.data.file[0].originalname )
       
       setloadUpload(false)
@@ -147,19 +143,35 @@ const InternalChat = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-        try {
-          const { data } = await api.get("/users/");
-          setContacts(data.users)
-        } catch (err) {
-          console.log(err);
+  const fetchUsers = async () => {
+    try {
+      const { data } = await api.get("/users/");
+
+      for (const item of data.users) { 
+        const loadContact = await api.get("/ChatInternal-unviewd", {
+          params: { sent_user: item.id , receiving_user: user.id, type: 1 } 
+        });
+        
+        const data = {
+          id : item.id,
+          name : item.name,
+          viewed : loadContact.data.data.length
         }
-      };
+
+        setContacts((value) => [...value, data]);
+
+      }
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
+  useEffect(() => {
       fetchUsers(); 
   }, []);
 
-  console.log(contact);
 
   return (
     <div className="container mt-4" style={{height: '85vh'}}>
@@ -174,7 +186,7 @@ const InternalChat = () => {
                 }}>
                   {contact.map((contacts) => {
                     if(contacts.id !== user.id)
-                      return <button type="button" className={`btn mt-2 ${selectedContact && selectedContact.id === contacts.id   ? 'btn-danger' : 'btn-success'}`} onClick={() => setSelectedContact(contacts)}>{contacts.name}</button>
+                      return <button type="button" className={`btn mt-2 ${selectedContact && selectedContact.id === contacts.id ? 'btn-danger' : 'btn-success'} ${contacts.viewed > 0 ? 'btn-warning' : 'btn-success'}`} onClick={() => setSelectedContact(contacts)}>{contacts.name}</button>
                    
                   })}
                 </div>

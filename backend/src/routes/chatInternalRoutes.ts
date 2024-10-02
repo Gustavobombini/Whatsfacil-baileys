@@ -14,6 +14,7 @@ chatRoutes.post("/ChatInternal-file",upload.array("file"), chatInternalRoutes.fi
 
 chatRoutes.get("/ChatInternal",  chatInternalRoutes.index);
 
+chatRoutes.get("/ChatInternal-unviewd",  chatInternalRoutes.unViewd);
 
 
 export default chatRoutes;

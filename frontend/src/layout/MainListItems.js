@@ -16,6 +16,7 @@ import { i18n } from "../translate/i18n";
 import { WhatsAppsContext } from "../context/WhatsApp/WhatsAppsContext";
 import { AuthContext } from "../context/Auth/AuthContext";
 import { Can } from "../components/Can";
+import api from "../services/api";
 
 function ListItemLink(props) {
   const { icon, primary, to, className } = props;
@@ -43,6 +44,7 @@ const MainListItems = (props) => {
   const { whatsApps } = useContext(WhatsAppsContext);
   const { user } = useContext(AuthContext);
   const [connectionWarning, setConnectionWarning] = useState(false);
+  const [chat, setchat] = useState([]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -65,6 +67,18 @@ const MainListItems = (props) => {
     }, 2000);
     return () => clearTimeout(delayDebounceFn);
   }, [whatsApps]);
+
+  setInterval(() => {
+    const fetchUnreadMsg = async () => {
+      const loadContact = await api.get("/ChatInternal-unviewd", {
+        params: { receiving_user: user.id, type: 2 } 
+      });
+      setchat(loadContact.data.data.length)
+      console.log(loadContact.data.data.length);
+    }
+    fetchUnreadMsg()
+
+  }, 10000)
 
   if(user.profile === "custom"){
     console.log(user);
@@ -91,7 +105,12 @@ const MainListItems = (props) => {
             <ListItemLink
             to="/internalchat"
             primary="Chat Interno"
-            icon={< ChatBubbleOutlineIcon/>}
+            icon={
+              <Badge badgeContent={chat > 0 ? "!" : 0} color="error">
+              < ChatBubbleOutlineIcon/>
+            </Badge>
+            }
+            
           />
           )
         } 
@@ -177,7 +196,11 @@ const MainListItems = (props) => {
           <ListItemLink
             to="/internalchat"
             primary="Chat Interno"
-            icon={< ChatBubbleOutlineIcon/>}
+            icon={
+              <Badge badgeContent={chat > 0 ? "!" : 0} color="error">
+                < ChatBubbleOutlineIcon/>
+              </Badge>
+            }
           />
   
           <ListItemLink

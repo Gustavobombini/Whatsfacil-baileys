@@ -50,4 +50,41 @@ export const file = async (req: Request, res: Response): Promise<Response> => {
   return res.json({file});
 };
 
+export const unViewd = async (req: Request, res: Response): Promise<Response> => {
+
+  const {sent_user , receiving_user, type} = req.query as any
+
+
+  if(type == 1){
+    const  data = await ChatInternal.findAll({
+      where:{
+        [Op.or]: [
+          { receiving_user: receiving_user, sent_user: sent_user, viewed: 0 },
+        ],
+      },
+      order: [['id', 'ASC']],
+    });
+
+    return res.json({data});
+  }else{
+    const  data = await ChatInternal.findAll({
+      where:{
+        [Op.or]: [
+          { receiving_user: receiving_user, viewed: 0 },
+        ],
+      },
+      order: [['id', 'ASC']],
+    });
+
+    return res.json({data});
+  }
+   
+
+  
+};
+
+
+
+
+
 

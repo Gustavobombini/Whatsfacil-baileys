@@ -337,7 +337,6 @@ const MessagesList = ({ ticketId, isGroup }) => {
           const { data } = await api.get("/messages/" + ticketId, {
             params: { pageNumber, seeAllMsg : user.seeAllMsg },
           });
-          console.log(user)
           if (currentTicketId.current === ticketId) {
             dispatch({ type: "LOAD_MESSAGES", payload: data.messages });
             setHasMore(data.hasMore);

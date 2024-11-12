@@ -8,10 +8,12 @@ interface QueueData {
   color: string;
   greetingMessage?: string;
   chatbots?: Chatbot[];
+  closed?: number;
+  defaults?: number;
 }
 
 const CreateQueueService = async (queueData: QueueData): Promise<Queue> => {
-  const { color, name } = queueData;
+  const { color, name, defaults } = queueData;
 
   const queueSchema = Yup.object().shape({
     name: Yup.string()
@@ -28,6 +30,25 @@ const CreateQueueService = async (queueData: QueueData): Promise<Queue> => {
 
             return !queueWithSameName;
           }
+          return false;
+        }
+      ),
+      defaults: Yup.number()
+      .test(
+        "Check-unique-name",
+        "ERR_QUEUE_DEFAULT_ALREADY_EXISTS",
+        async value => {
+          
+          if (value == 1) {
+            const queueWithSameName = await Queue.findOne({
+              where: { defaults: value }
+            });
+
+            return !queueWithSameName;
+          }else{
+            return true;
+          }
+
           return false;
         }
       ),
@@ -56,7 +77,7 @@ const CreateQueueService = async (queueData: QueueData): Promise<Queue> => {
   });
 
   try {
-    await queueSchema.validate({ color, name });
+    await queueSchema.validate({ color, name, defaults });
   } catch (err) {
     throw new AppError(err.message);
   }

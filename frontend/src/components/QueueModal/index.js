@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Formik, FieldArray, Form, Field } from "formik";
 import { toast } from "react-toastify";
 
-import { FormControlLabel, MenuItem, Select } from "@material-ui/core";
+import { FormControlLabel, InputLabel, MenuItem, Select } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
@@ -106,6 +106,8 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
     color: "",
     greetingMessage: "",
     chatbots: [],
+    closed: 0,
+    defaults: 0,
   };
 
   const [colorPickerModalOpen, setColorPickerModalOpen] = useState(false);
@@ -150,6 +152,8 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
         color: "",
         greetingMessage: "",
         chatbots: [],
+        closed: 0,
+        defaults: 0,
       });
     };
   }, [queueId, open]);
@@ -193,7 +197,7 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
 
   const handleSaveQueue = async (values) => {
     try {
-      console.log(queueId);
+      console.log(values);
       if (queueId) {
         await api.put(`/queue/${queueId}`, values);
       } else {
@@ -303,17 +307,21 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
           {({ handleChange, touched, errors, isSubmitting, values }) => (
             <Form>
               <DialogContent dividers>
-                <Field
-                  as={TextField}
-                  label={i18n.t("queueModal.form.name")}
-                  autoFocus
-                  name="name"
-                  error={touched.name && Boolean(errors.name)}
-                  helperText={touched.name && errors.name}
-                  variant="outlined"
-                  margin="dense"
-                  className={classes.textField}
-                />
+              <div className="row">
+                <div className="col">
+                  <Field
+                    as={TextField}
+                    label={i18n.t("queueModal.form.name")}
+                    autoFocus
+                    name="name"
+                    error={touched.name && Boolean(errors.name)}
+                    helperText={touched.name && errors.name}
+                    variant="outlined"
+                    margin="dense"
+                    className={classes.textField}
+                  />
+                </div>
+                <div className="col">
                 <Field
                   as={TextField}
                   label={i18n.t("queueModal.form.color")}
@@ -357,6 +365,48 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
                     });
                   }}
                 />
+                </div>
+                
+               
+                  
+                
+                  <div className="col">
+                    <InputLabel id="closed-label">
+                        Finalizar
+                    </InputLabel>
+
+                    <Field
+                      as={Select}
+                      label="Fechar"
+                      name="closed"
+                      id="closed"
+                      labelId="closed-label"
+                      style={{margin: "1%" , width: "100%"}}
+                    >
+                      <MenuItem value={0} selected>Sim</MenuItem>
+                      <MenuItem value={1}>Não</MenuItem>
+                    </Field>
+
+                  </div>
+                  <div className="col">
+                    <InputLabel id="default-label">
+                          Padrao
+                      </InputLabel>
+
+                    <Field
+                      as={Select}
+                      label="Padrao"
+                      name="defaults"
+                      id="defaults"
+                      labelId="default-label"
+                      style={{margin: "1%", width: "100%"}}
+                    >
+                      <MenuItem value={0} selected>Nao</MenuItem>
+                      <MenuItem value={1}>Sim</MenuItem>
+                    </Field>
+                  </div>
+                </div>
+                  
                 <div>
                   <Field
                     as={TextField}

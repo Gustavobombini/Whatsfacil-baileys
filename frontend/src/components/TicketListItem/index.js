@@ -61,8 +61,11 @@ const useStyles = makeStyles(theme => ({
 
 	contactNameWrapper: {
 		display: "flex",
+		maxWidth: "75%",
 		justifyContent: "space-between",
 	},
+
+	
 
 	lastMessageTime: {
 		justifySelf: "flex-end",
@@ -317,23 +320,28 @@ const TicketListItem = ({ ticket }) => {
 					onClick={e => handleClosedTicket(ticket.id)} >
 					<ClearOutlinedIcon />
 				  	</IconButton>								
-				)}				
-				{ticket.status === "open" && (
-					<IconButton
-					className={classes.bottomButton}
-					color="primary" 
-					onClick={e => handleViewTicket(ticket.id)} >
-					<ReplayIcon />
-				  	</IconButton>	
-				)}
-				 {ticket.status === "open" && (
-					<IconButton
-					className={classes.bottomButton}
-					color="primary"
-					onClick={e => handleClosedTicket(ticket.id)} >
-					<ClearOutlinedIcon />
-				  	</IconButton>								
-				)}						
+				)}		
+
+				{((ticket.queue && (ticket.status === "open" && ticket.queue.closed != 1 ) || (ticket.status === "open" && user.profile == "admin" )) || (ticket.queue == null && ticket.status === "open")) ? (
+					<>
+						<IconButton
+						className={classes.bottomButton}
+						color="primary" 
+						onClick={e => handleViewTicket(ticket.id)} >
+						<ReplayIcon />
+						</IconButton>	
+					
+
+						<IconButton
+						className={classes.bottomButton}
+						color="primary"
+						onClick={e => handleClosedTicket(ticket.id)} >
+						<ClearOutlinedIcon />
+						</IconButton>
+					</>								
+				) : ""}		
+
+
 				{ticket.status === "closed" && (
 					<IconButton
 					className={classes.bottomButton}

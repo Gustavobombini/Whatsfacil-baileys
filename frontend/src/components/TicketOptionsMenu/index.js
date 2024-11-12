@@ -7,6 +7,7 @@ import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
 import ConfirmationModal from "../ConfirmationModal";
 import TransferTicketModal from "../TransferTicketModal";
+import AddUserModal from "../AddUserModal";
 import toastError from "../../errors/toastError";
 import { Can } from "../Can";
 import { AuthContext } from "../../context/Auth/AuthContext";
@@ -14,6 +15,7 @@ import { AuthContext } from "../../context/Auth/AuthContext";
 const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 	const [confirmationOpen, setConfirmationOpen] = useState(false);
 	const [transferTicketModalOpen, setTransferTicketModalOpen] = useState(false);
+	const [AddUserModalOpen, setAddUserModalOpen] = useState(false);
 	const isMounted = useRef(true);
 	const { user } = useContext(AuthContext);
 
@@ -36,6 +38,11 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 		handleClose();
 	};
 
+	const handleOpenAddUserModal = e => {
+		setAddUserModalOpen(true)
+		handleClose();
+	};
+
 	const handleOpenTransferModal = e => {
 		setTransferTicketModalOpen(true);
 		handleClose();
@@ -44,6 +51,12 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 	const handleCloseTransferTicketModal = () => {
 		if (isMounted.current) {
 			setTransferTicketModalOpen(false);
+		}
+	};
+
+	const handleCloseAddUserModal = () => {
+		if (isMounted.current) {
+			setAddUserModalOpen(false);
 		}
 	};
 
@@ -67,6 +80,9 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 			>
 				<MenuItem onClick={handleOpenTransferModal}>
 					{i18n.t("ticketOptionsMenu.transfer")}
+				</MenuItem>
+				<MenuItem onClick={handleOpenAddUserModal}>
+					Add. Usuario
 				</MenuItem>
 				<Can
 					role={user.profile}
@@ -93,6 +109,12 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 			<TransferTicketModal
 				modalOpen={transferTicketModalOpen}
 				onClose={handleCloseTransferTicketModal}
+				ticketid={ticket.id}
+				ticketWhatsappId={ticket.whatsappId}
+			/>
+			<AddUserModal
+				modalOpen={AddUserModalOpen}
+				onClose={handleCloseAddUserModal}
 				ticketid={ticket.id}
 				ticketWhatsappId={ticket.whatsappId}
 			/>

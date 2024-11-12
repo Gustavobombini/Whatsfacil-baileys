@@ -332,8 +332,6 @@ export const sayChatbot = async (
 
     console.log("!getStageBot", selectedOptions);
     const choosenQueue = queue.chatbots[+selectedOptions - 1];
-
-    console.log(queue.chatbots);
     
 
      if(choosenQueue?.isAgent){		

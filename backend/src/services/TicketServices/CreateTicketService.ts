@@ -10,17 +10,21 @@ interface Request {
   status: string;
   userId: number;
   queueId?: number;
+  verify? :number;
 }
 
 const CreateTicketService = async ({
   contactId,
   status,
   userId,
-  queueId
+  queueId,
+  verify
 }: Request): Promise<Ticket> => {
   const defaultWhatsapp = await GetDefaultWhatsApp(userId);
 
-  await CheckContactOpenTickets(contactId, defaultWhatsapp.id);
+  if(verify != 1){
+    await CheckContactOpenTickets(contactId, defaultWhatsapp.id);
+  }
 
   const { isGroup } = await ShowContactService(contactId);
 
@@ -38,7 +42,7 @@ const CreateTicketService = async ({
     isBot: false
   });
 
-  const ticket = await Ticket.findByPk(id, { include: ["contact"] });
+  const ticket = await Ticket.findByPk(id, { include: ["contact" , "queue"] });
 
   if (!ticket) {
     throw new AppError("ERR_CREATING_TICKET");

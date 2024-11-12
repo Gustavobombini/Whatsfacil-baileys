@@ -130,12 +130,6 @@ const TicketsManager = () => {
 
     clearTimeout(searchTimeout);
 
-    if (searchedTerm === "") {
-      setSearchParam(searchedTerm);
-      setTab("open");
-      return;
-    }
-
     searchTimeout = setTimeout(() => {
       setSearchParam(searchedTerm);
     }, 500);

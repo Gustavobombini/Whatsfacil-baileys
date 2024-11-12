@@ -78,7 +78,7 @@ const MainListItems = (props) => {
     }
     fetchUnreadMsg()
 
-  }, 10000)
+  }, 60000)
 
   if(user.profile === "custom"){
     console.log(user);

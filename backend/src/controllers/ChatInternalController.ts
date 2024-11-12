@@ -67,6 +67,8 @@ export const unViewd = async (req: Request, res: Response): Promise<Response> =>
 
     return res.json({data});
   }else{
+
+    if(receiving_user){
     const  data = await ChatInternal.findAll({
       where:{
         [Op.or]: [
@@ -77,6 +79,8 @@ export const unViewd = async (req: Request, res: Response): Promise<Response> =>
     });
 
     return res.json({data});
+
+  }
   }
    
 

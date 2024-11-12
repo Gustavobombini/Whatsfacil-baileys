@@ -57,7 +57,7 @@ const ListTicketsService = async ({
     {
       model: Queue,
       as: "queue",
-      attributes: ["id", "name", "color"]
+      attributes: ["id", "name", "color", "defaults", "closed"]
     },
     {
       model: Whatsapp,
@@ -87,20 +87,6 @@ const ListTicketsService = async ({
 
     includeCondition = [
       ...includeCondition,
-      {
-        model: Message,
-        as: "messages",
-        attributes: ["id", "body"],
-        where: {
-          body: where(
-            fn("LOWER", col("body")),
-            "LIKE",
-            `%${sanitizedSearchParam}%`
-          )
-        },
-        required: false,
-        duplicating: false
-      }
     ];
 
     whereCondition = {
@@ -114,13 +100,7 @@ const ListTicketsService = async ({
           )
         },
         { "$contact.number$": { [Op.like]: `%${sanitizedSearchParam}%` } },
-        {
-          "$message.body$": where(
-            fn("LOWER", col("body")),
-            "LIKE",
-            `%${sanitizedSearchParam}%`
-          )
-        }
+        
       ]
     };
   }

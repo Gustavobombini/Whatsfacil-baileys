@@ -191,7 +191,7 @@ const TicketsList = (props) => {
 		} else {
 			dispatch({ type: "LOAD_TICKETS", payload: tickets });
 		}
-	}, [tickets, status, searchParam, queues, profile]);
+	}, [tickets, status, queues, profile  ]);
 
   useEffect(() => {
     const socket = openSocket();

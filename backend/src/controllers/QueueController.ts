@@ -13,13 +13,15 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 };
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
-  const { name, color, greetingMessage, chatbots } = req.body;
+  const { name, color, greetingMessage, chatbots, closed, defaults} = req.body;
 
   const queue = await CreateQueueService({
     name,
     color,
     greetingMessage,
-    chatbots
+    chatbots,
+    closed,
+    defaults,
   });
 
   const io = getIO();
@@ -44,6 +46,7 @@ export const update = async (
   res: Response
 ): Promise<Response> => {
   const { queueId } = req.params;
+ 
 
   const queue = await UpdateQueueService(queueId, req.body);
 

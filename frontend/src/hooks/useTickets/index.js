@@ -47,7 +47,7 @@ const useTickets = ({
                         dataLimite.setHours(dataLimite.getHours() - Number(horasFecharAutomaticamente))
 
                         data.tickets.forEach(ticket => {
-                            if (ticket.status !== "closed") {
+                            if (ticket.status !== "closed" && !ticket.isGroup) {
                                 let dataUltimaInteracaoChamado = new Date(ticket.updatedAt)
                                 if (dataUltimaInteracaoChamado < dataLimite)
                                     closeTicket(ticket)

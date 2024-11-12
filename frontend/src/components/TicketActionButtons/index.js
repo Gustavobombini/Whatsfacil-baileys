@@ -44,6 +44,7 @@ const TicketActionButtons = ({ ticket }) => {
 		setAnchorEl(null);
 	};
 
+
 	const handleUpdateTicketStatus = async (e, status, userId) => {
 		setLoading(true);
 		try {
@@ -62,6 +63,8 @@ const TicketActionButtons = ({ ticket }) => {
 			setLoading(false);
 			toastError(err);
 		}
+
+
 	};
 
 	return (
@@ -76,7 +79,7 @@ const TicketActionButtons = ({ ticket }) => {
 					{i18n.t("messagesList.header.buttons.reopen")}
 				</ButtonWithSpinner>
 			)}
-			{ticket.status === "open" && (
+			{((ticket.queue && (ticket.status === "open" && ticket.queue.closed != 1 ) || (ticket.status === "open" && user.profile == "admin" )) || (ticket.queue == null && ticket.status === "open"))  && (
 				<>
 					<ButtonWithSpinner
 						loading={loading}

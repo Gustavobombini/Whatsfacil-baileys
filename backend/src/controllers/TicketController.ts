@@ -10,6 +10,9 @@ import SendWhatsAppMessage from "../services/WbotServices/SendWhatsAppMessage";
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 
 import Ticket from "../models/Ticket";
+import CheckIfUserHasContact from "../helpers/CheckIfUserHasContact";
+import AppError from "../errors/AppError";
+import ShowDefaultQueueService from "../services/QueueService/ShowDefaultQueueService";
 
 type IndexQuery = {
   searchParam: string;
@@ -162,4 +165,60 @@ export const remove = async (
     });
 
   return res.status(200).json({ message: "ticket deleted" });
+};
+
+export const addUser = async (  req: Request,   res: Response): Promise<Response> => {
+  const { ticketid, user } = req.body;
+
+  const ticket = await ShowTicketService(ticketid);
+
+  const id = ticket.id;
+  let queue = ticket.queueId;
+
+
+    if(!ticket.isGroup){
+
+     const Newqueue = await ShowDefaultQueueService();
+
+     if(Newqueue){
+      const { ticket } =  await UpdateTicketService({
+        ticketData: {queueId: Newqueue.id },
+        ticketId: id
+      });
+
+      queue = Newqueue.id
+     }
+
+    }
+
+    const ckeck = await CheckIfUserHasContact(ticket.contactId, user);
+
+    if(!ckeck){
+
+      const newticket = await CreateTicketService({
+        contactId: ticket.contactId,
+        status: 'open',
+        userId: user,
+        queueId: queue,
+        verify: 1
+      }); 
+    
+      const io = getIO();
+          
+      io.to(newticket.status)
+      .to(`queue-${newticket.queueId}-${newticket.status}`)
+      .emit("ticket", {
+        action: "update",
+        ticket: newticket
+      });
+      
+      
+      return res.json("Usuario adicionado!");
+    }else{
+      return res.json("Usuario ja na Conversa!");
+    }
+    
+
+  
+  
 };

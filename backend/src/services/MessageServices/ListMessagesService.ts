@@ -8,6 +8,7 @@ import ShowTicketService from "../TicketServices/ShowTicketService";
 interface Request {
   ticketId: string;
   pageNumber?: string;
+  seeAllMsg: any
 }
 
 interface Response {
@@ -20,12 +21,16 @@ interface Response {
 const ListMessagesService = async ({
   pageNumber = "1",
   ticketId,
+  seeAllMsg
 }: Request): Promise<Response> => {
   const ticket = await ShowTicketService(ticketId);
 
   if (!ticket) {
     throw new AppError("ERR_NO_TICKET_FOUND", 404);
   }
+
+  console.log(seeAllMsg);
+  
 
   const limit = 100;
   const offset = limit * (+pageNumber - 1);
@@ -34,10 +39,7 @@ const ListMessagesService = async ({
   const viewOthersQueue = process.env.VIEW_MSG_OTHERS_QUEUE;
   const viewOthersClosed = process.env.VIEW_MSG_OTHERS_NUMBER_CLOSED;
 
-  let viewClosed = false;
-
-  console.log(viewOthers);
-  
+  let viewClosed = false; 
  
   if(ticket.status == 'closed'){
     if(viewOthersClosed == '2'){
@@ -57,11 +59,12 @@ const ListMessagesService = async ({
             },
             {
                 model: Ticket,
-                where: { contactId: ticket.contactId, 
-				          ...(viewClosed && { whatsappId: ticket.whatsappId }),
-                  ...((viewOthers == '2' && ticket.status != 'closed') && { whatsappId: ticket.whatsappId }),
-                  ...(viewOthersQueue == '2'  && { queueId: ticket.queueId })
-                  },
+                where: { 
+                  ...(seeAllMsg == 2 ? { id : ticket.id } : { contactId: ticket.contactId }),
+                  ...(viewClosed && { whatsappId: ticket.whatsappId }),
+                  ...((viewOthers === '2' && ticket.status !== 'closed') && { whatsappId: ticket.whatsappId }),
+                  ...(viewOthersQueue === '2' && { queueId: ticket.queueId })
+                },
                 required: true
             },
         ],

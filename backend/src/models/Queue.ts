@@ -38,6 +38,12 @@ class Queue extends Model<Queue> {
   @Column
   greetingMessage: string;
 
+  @Column
+  closed: number;
+
+  @Column
+  defaults: number;
+
   @CreatedAt
   createdAt: Date;
 
@@ -52,6 +58,7 @@ class Queue extends Model<Queue> {
 
   @HasMany(() => Chatbot)
   chatbots: Chatbot[];
+
 }
 
 export default Queue;

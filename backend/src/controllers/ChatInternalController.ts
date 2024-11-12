@@ -3,6 +3,7 @@ import ChatInternal from "../models/ChatInternal";
 import { Op, Sequelize } from "sequelize";
 import { log } from "console";
 import AppError from "../errors/AppError";
+import sequelize from "../database";
 
 ''
 export const index = async (req: Request, res: Response): Promise<Response> => {
@@ -52,18 +53,11 @@ export const file = async (req: Request, res: Response): Promise<Response> => {
 
 export const unViewd = async (req: Request, res: Response): Promise<Response> => {
 
-  const {sent_user , receiving_user, type} = req.query as any
+  const {receiving_user, type} = req.query as any
 
 
   if(type == 1){
-    const  data = await ChatInternal.findAll({
-      where:{
-        [Op.or]: [
-          { receiving_user: receiving_user, sent_user: sent_user, viewed: 0 },
-        ],
-      },
-      order: [['id', 'ASC']],
-    });
+    const  data = await sequelize.query(`SELECT users.id AS id, users.name AS name, COUNT(chatinternal.id) AS viewed FROM users LEFT JOIN chatinternal ON users.id = chatinternal.sent_user AND chatinternal.receiving_user = ${receiving_user} AND chatinternal.viewed = 0 GROUP BY users.id, users.name;  `)
 
     return res.json({data});
   }else{

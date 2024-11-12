@@ -3,7 +3,6 @@ import { useHistory, useParams } from "react-router-dom";
 import api from "../../services/api";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import openSocket from "../../services/socket-io";
-import { toast } from 'react-toastify';
 
 import { Badge } from "@material-ui/core";
 
@@ -25,7 +24,6 @@ const InternalChat = () => {
 
 
   useEffect(() => {
-    // Rolagem automática para o final da lista de mensagens
     if (divMsgEndRef.current) {
       divMsgEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
@@ -37,24 +35,21 @@ const InternalChat = () => {
         const loadMsg = await api.get("/ChatInternal", {
           params: { sent_user: user.id, receiving_user: selectedContact.id } 
         });
-        
 
         setMsg([]);
+
         if(loadMsg.data.data.length > 0){
           loadMsg.data.data.map( item => {
             setMsg((msgList) => [...msgList, item])
           })
         }
-
-        fetchUsers()
       }catch{
         console.log('Erro ao carregar mensagens');
       }
-
     }
 
-    setContacts([]);
     fetchMsg()
+    fetchUsers(); 
   }, [selectedContact]);
 
 
@@ -64,7 +59,7 @@ const InternalChat = () => {
         setMsg((msgList) => [...msgList, data])
       }
     };
-    socket.on("receive_msg", handleReceiveMessage);
+      socket.on("receive_msg", handleReceiveMessage);
     return () => {
       socket.off("receive_msg", handleReceiveMessage);
     };
@@ -147,23 +142,11 @@ const InternalChat = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await api.get("/users/");
 
-      for (const item of data.users) { 
-        const loadContact = await api.get("/ChatInternal-unviewd", {
-          params: { sent_user: item.id , receiving_user: user.id, type: 1 } 
-        });
-        
-        const data = {
-          id : item.id,
-          name : item.name,
-          viewed : loadContact.data.data.length
-        }
-
-        setContacts((value) => [...value, data]);
-
-      }
-
+      const {data} = await api.get("/ChatInternal-unviewd", {
+        params: { receiving_user: user.id, type: 1 } 
+      });
+        setContacts(data.data[0]);
     } catch (err) {
       console.log(err);
     }

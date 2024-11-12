@@ -16,7 +16,7 @@ interface ContactData {
 }
 
 interface Request {
-  contactData: ContactData;
+  contactData?: ContactData;
   contactId: string;
 }
 

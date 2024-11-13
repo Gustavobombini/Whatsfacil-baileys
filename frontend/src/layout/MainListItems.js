@@ -68,27 +68,17 @@ const MainListItems = (props) => {
     return () => clearTimeout(delayDebounceFn);
   }, [whatsApps]);
 
-  let controller;
-
   setInterval(() => {
-    if (controller) controller.abort();
-    controller = new AbortController();
-  
     const fetchUnreadMsg = async () => {
-      try {
-        const loadContact = await api.get("/ChatInternal-unviewd", {
-          params: { receiving_user: user.id, type: 2 },
-          signal: controller.signal,
-        });
-        setchat(loadContact.data.data.length);
-        console.log(loadContact.data.data.length);
-      } catch (error) {
-        if (error.name !== 'AbortError') console.error("Request failed:", error);
-      }
-    };
-    
-    fetchUnreadMsg();
-  }, 60000);
+      const loadContact = await api.get("/ChatInternal-unviewd", {
+        params: { receiving_user: user.id, type: 2 } 
+      });
+      setchat(loadContact.data.data.length)
+      console.log(loadContact.data.data.length);
+    }
+    fetchUnreadMsg()
+
+  }, 60000)
 
   if(user.profile === "custom"){
     console.log(user);

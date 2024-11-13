@@ -146,7 +146,7 @@ const InternalChat = () => {
       const {data} = await api.get("/ChatInternal-unviewd", {
         params: { receiving_user: user.id, type: 1 } 
       });
-        setContacts(data.data[0]);
+        setContacts(data.data);
     } catch (err) {
       console.log(err);
     }

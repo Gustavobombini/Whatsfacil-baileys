@@ -119,12 +119,20 @@ const LoggedInLayout = ({ children }) => {
       const urlAtual = window.location.href;
       const URL = urlAtual.split('/');
       const idUrl = URL[URL.length - 1];
+
+      Notification.requestPermission().then(function (permission) {})
       
       if(data.receiving_user === user.id &&  idUrl != data.sent_user){
           if(data.type_message === 'file'){
             toast.success(`${data.sent_name}: Enviou um Anexo`);
+            new Notification(data.sent_name , {
+              body: `${data.sent_name}: Enviou um Anexo`
+            });
           }else{
             toast.success(`${data.sent_name}: ${data.message}`);
+            new Notification(data.sent_name , {
+              body: `${data.sent_name}: ${data.message}`
+            });
           }
       }
     };

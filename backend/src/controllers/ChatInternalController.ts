@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import ChatInternal from "../models/ChatInternal";
-import { Op, Sequelize } from "sequelize";
+import { Op, Sequelize, QueryTypes  } from "sequelize";
 import { log } from "console";
 import AppError from "../errors/AppError";
 import sequelize from "../database";
+import User from "../models/User";
 
 ''
 export const index = async (req: Request, res: Response): Promise<Response> => {
@@ -57,7 +58,27 @@ export const unViewd = async (req: Request, res: Response): Promise<Response> =>
 
 
   if(type == 1){
-    const  data = await sequelize.query(`SELECT users.id AS id, users.name AS name, COUNT(chatinternal.id) AS viewed FROM users LEFT JOIN chatinternal ON users.id = chatinternal.sent_user AND chatinternal.receiving_user = ${receiving_user} AND chatinternal.viewed = 0 GROUP BY users.id, users.name;  `)
+    const data = await User.findAll({
+      attributes: [
+        'id',
+        'name',
+        [Sequelize.fn('COUNT', Sequelize.col('chatMessages.id')), 'viewed'] // Alias correto para a tabela `ChatInternal`
+      ],
+      include: [
+        {
+          model: ChatInternal,
+          as: 'chatMessages', // Alias definido no `@HasMany`
+          required: false, // Left join
+          where: {
+            receiving_user: receiving_user,
+            viewed: 0
+          },
+          attributes: [] // Não queremos colunas da tabela ChatInternal, só queremos contar
+        }
+      ],
+      group: ['User.id', 'User.name'] // Agrupar por User.id e User.name
+    });
+    
 
     return res.json({data});
   }else{

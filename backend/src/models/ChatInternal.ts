@@ -7,7 +7,10 @@ import {
   PrimaryKey,
   AutoIncrement,
   BeforeUpdate,
+  ForeignKey,
+  BelongsTo,
 } from "sequelize-typescript";
+import User from "./User";
 
 @Table({
   freezeTableName: true, // Impede a pluralização automática
@@ -18,6 +21,7 @@ import {
 class chatinternal extends Model<chatinternal> {
   @PrimaryKey
   @AutoIncrement
+  @ForeignKey(() => User)
   
   @Column
   id: number;
@@ -48,6 +52,9 @@ class chatinternal extends Model<chatinternal> {
 
   @UpdatedAt
   updatedAt: Date;
+
+  @BelongsTo(() => User)
+  sender: User; // 
 
 }
 

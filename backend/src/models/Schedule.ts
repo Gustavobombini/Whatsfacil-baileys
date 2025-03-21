@@ -30,6 +30,9 @@ class Schedule extends Model<Schedule> {
   @Column
   sentAt: Date;
 
+  @Column
+  whatsappId: string;
+
   @ForeignKey(() => Contact)
   @Column
   contactId: number;

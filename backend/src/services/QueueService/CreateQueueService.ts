@@ -10,6 +10,7 @@ interface QueueData {
   chatbots?: Chatbot[];
   closed?: number;
   defaults?: number;
+  typebot?: string;
 }
 
 const CreateQueueService = async (queueData: QueueData): Promise<Queue> => {

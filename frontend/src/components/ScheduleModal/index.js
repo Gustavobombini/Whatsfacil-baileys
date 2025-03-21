@@ -19,11 +19,12 @@ import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
-import { FormControl } from "@material-ui/core";
+import { FormControl, MenuItem, Select } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import moment from "moment"
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { isArray, capitalize } from "lodash";
+import useWhatsApps from "../../hooks/useWhatsApps";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -72,7 +73,8 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 		body: "",
 		contactId: "",
 		sendAt: moment().add(1, 'hour').format('YYYY-MM-DDTHH:mm'),
-		sentAt: ""
+		sentAt: "",
+		whatsappId: 0
 	};
 
 	const initialContact = {
@@ -83,6 +85,8 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 	const [schedule, setSchedule] = useState(initialState);
 	const [currentContact, setCurrentContact] = useState(initialContact);
 	const [contacts, setContacts] = useState([initialContact]);
+	const {loading, whatsApps} = useWhatsApps();
+	const [whatsappId, setWhatsappId] = useState(false);
 
 	useEffect(() => {
 		if (contactId && contacts.length) {
@@ -94,6 +98,10 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 	}, [contactId, contacts]);
 
 	useEffect(() => {
+		setWhatsappId(0)
+		setCurrentContact(initialContact);
+		setSchedule(initialState);
+
 		try {
 			(async () => {
 				const { data: contactList } = await api.get('/contacts/list');
@@ -110,9 +118,14 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 				if (!scheduleId) return;
 
 				const { data } = await api.get(`/schedules/${scheduleId}`);
+
+				setWhatsappId(data.whatsappId)
+				
+
 				setSchedule(prevState => {
 					return { ...prevState, ...data, sendAt: moment(data.sendAt).format('YYYY-MM-DDTHH:mm') };
 				});
+
 				setCurrentContact(data.contact);
 			})()
 		} catch (err) {
@@ -126,7 +139,9 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 	};
 
 	const handleSaveSchedule = async values => {
-		const scheduleData = { ...values, userId: user.id };
+
+
+		const scheduleData = { ...values, userId: user.id, whatsappId: whatsappId, status : 'PENDENTE' };
 		try {
 			if (scheduleId) {
 				await api.put(`/schedules/${scheduleId}`, scheduleData);
@@ -137,6 +152,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 			if (typeof reload == 'function') {
 				reload();
 			}
+			setWhatsappId(0)
 			setCurrentContact(initialContact);
 			setSchedule(initialState);
 			history.push('/schedules')
@@ -177,11 +193,13 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 									<FormControl
 										variant="outlined"
 										fullWidth
+										label="Contato"
 									>
 										<Autocomplete
 											fullWidth
 											value={currentContact}
 											options={contacts}
+											label='Contato'
 											onChange={(e, contact) => {
 												const contactId = contact ? contact.id : '';
 												setSchedule({ ...schedule, contactId });
@@ -196,12 +214,34 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 									</FormControl>
 								</div>
 								<br />
+								<div className={classes.multFieldLine}>	
+									<FormControl
+										variant="outlined"
+										fullWidth
+										label='WhatsApp'
+										>
+										
+										<Field
+											as={Select}
+											value={whatsappId}
+											onChange={(e) => setWhatsappId(e.target.value)}
+											label='WhatsApp'
+											name='whatsappId'
+										>
+										<MenuItem value={''}>&nbsp;</MenuItem>
+											{whatsApps.map((whatsapp) => (
+												<MenuItem key={whatsapp.id} value={whatsapp.id}>{whatsapp.name}</MenuItem>
+											))}
+										</Field>
+									</FormControl>	
+								</div>
+								<br />
 								<div className={classes.multFieldLine}>
 									<Field
 										as={TextField}
 										rows={9}
 										multiline={true}
-										label={i18n.t("scheduleModal.form.body")}
+										label="Texto"
 										name="body"
 										error={touched.body && Boolean(errors.body)}
 										helperText={touched.body && errors.body}
@@ -214,7 +254,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 								<div className={classes.multFieldLine}>
 									<Field
 										as={TextField}
-										label={i18n.t("scheduleModal.form.sendAt")}
+										label="Data de Envio"
 										type="datetime-local"
 										name="sendAt"
 										InputLabelProps={{
@@ -234,7 +274,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 									disabled={isSubmitting}
 									variant="outlined"
 								>
-									{i18n.t("scheduleModal.buttons.cancel")}
+									Cancelar
 								</Button>
 								{ (schedule.sentAt === null || schedule.sentAt === "") && (
 									<Button
@@ -244,9 +284,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 										variant="contained"
 										className={classes.btnWrapper}
 									>
-										{scheduleId
-											? `${i18n.t("scheduleModal.buttons.okEdit")}`
-											: `${i18n.t("scheduleModal.buttons.okAdd")}`}
+										Salvar
 										{isSubmitting && (
 											<CircularProgress
 												size={24}

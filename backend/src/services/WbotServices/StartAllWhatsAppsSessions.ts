@@ -11,9 +11,9 @@ export const StartAllWhatsAppsSessions = async (): Promise<void> => {
     });
   }
 
-   setTimeout(() => {
+  setInterval(() => {
      startQueueProcess();
-   }, 5000);
+   }, 60000);
 
    setTimeout(() => {
     runSendMessage();

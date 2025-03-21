@@ -45,6 +45,10 @@ class Ticket extends Model<Ticket> {
   @Column
   isBot: boolean;
 
+  @Default(null)
+  @Column
+  typebot: string;
+
   @Default("whatsapp")
   @Column
   channel: string;

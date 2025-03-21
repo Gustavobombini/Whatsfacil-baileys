@@ -27,6 +27,9 @@ class Chatbot extends Model<Chatbot> {
   @Column
   greetingMessage: string;
 
+  @Column
+  file: string;
+
   @ForeignKey(() => Queue)
   @Column
   queueId: number;

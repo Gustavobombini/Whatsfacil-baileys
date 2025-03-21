@@ -15,6 +15,8 @@ import UpdateTicketService from "../TicketServices/UpdateTicketService";
 import Chatbot from "../../models/Chatbot";
 import User from "../../models/User";
 import Setting from "../../models/Setting";
+import iniciarChat from "../Dialogflow/DialogflowClient";
+import { logger } from "../../utils/logger";
 
 type Session = WASocket & {
   id?: number;
@@ -215,6 +217,8 @@ const backToMainMenu = async (
     const body = formatBody(`\u200e${greetingMessage}\n\n${options}`, contact);
     await sendMessage(wbot, contact, ticket, body);
 
+    
+
     const deleteDialog = await DeleteDialogChatBotsServices(contact.id);
     return deleteDialog;
   };
@@ -308,9 +312,13 @@ export const sayChatbot = async (
     msg?.message?.listResponseMessage?.singleSelectReply.selectedRowId ||
     getBodyMessage(msg);
 
-  console.log("Selecionado a opção: ", selectedOption);
-
+    
+  if(!msg.key.fromMe){
+    iniciarChat(ticket, '');
+  }
+    
   if (!queueId && selectedOption && msg.key.fromMe) return;
+ 
 
   const getStageBot = await ShowDialogChatBotsServices(contact.id);
 
@@ -330,7 +338,7 @@ export const sayChatbot = async (
       msg?.message?.listResponseMessage?.singleSelectReply.selectedRowId ||
       getBodyMessage(msg);
 
-    console.log("!getStageBot", selectedOptions);
+
     const choosenQueue = queue.chatbots[+selectedOptions - 1];
     
 

@@ -35,6 +35,7 @@ import UpdateTicketService from "../TicketServices/UpdateTicketService";
 import { sayChatbot } from "./ChatBotListener";
 import hourExpedient from "./hourExpedient";
 import { log } from "console";
+import iniciarChat  from "../../services/Dialogflow/DialogflowClient";
 
 type Session = WASocket & {
   id?: number;
@@ -170,22 +171,22 @@ export const getBodyMessage = (msg: proto.IWebMessageInfo): string | null => {
       reactionMessage: msg.message.reactionMessage?.text || "reaction",
 
       documentWithCaptionMessage: msg.message?.documentWithCaptionMessage?.message.documentMessage.caption,
+
+      editedMessage: msg.message.editedMessage?.message.protocolMessage.editedMessage.conversation + ' *Editada*',
     };
 
-  
-    
 
     const objKey = Object.keys(types).find(key => key === type);
 
-    
     if (!objKey) {
-      logger.warn(`#### Nao achou o type 152: ${type}
-${JSON.stringify(msg)}`);
-      Sentry.setExtra("Mensagem", { BodyMsg: msg.message, msg, type });
-      Sentry.captureException(
-        new Error("Novo Tipo de Mensagem em getTypeMessage")
-      );
+        logger.warn(`#### Nao achou o type 152: ${type}
+        ${JSON.stringify(msg)}`);
+              Sentry.setExtra("Mensagem", { BodyMsg: msg.message, msg, type });
+              Sentry.captureException(
+                  new Error("Novo Tipo de Mensagem em getTypeMessage")
+              );
     }
+
     return types[type];
 
   } catch (error) {
@@ -499,7 +500,8 @@ const isValidMsg = (msg: proto.IWebMessageInfo): boolean => {
       msgType === "listResponseMessage" ||
       msgType === "listMessage" ||
       msgType === "viewOnceMessage" ||
-      msgType === "documentWithCaptionMessage";
+      msgType === "documentWithCaptionMessage" ||
+      msgType === "editedMessage";
 
     if (!ifType) {
       logger.warn(`#### Nao achou o type em isValidMsg: ${msgType}
@@ -539,6 +541,8 @@ const verifyQueue = async (
 
   const choosenQueue = queues[+selectedOption - 1];
 
+ 
+
   const buttonActive = await Setting.findOne({
     where: {
       key: "chatBotType"
@@ -552,27 +556,8 @@ const verifyQueue = async (
         ticketId: ticket.id
       });
 
-      if (choosenQueue.chatbots.length > 0) {
-        let options = "";
-        choosenQueue.chatbots.forEach((chatbot, index) => {
-          options += `*${index + 1}* - ${chatbot.name}\n`;
-        });
+      if(choosenQueue.typebot){
 
-        const body = formatBody(
-          `\u200e${choosenQueue.greetingMessage}\n\n${options}\n*#* Voltar para o menu principal`,
-          contact
-        );
-        const sentMessage = await wbot.sendMessage(
-          `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
-          {
-            text: body
-          }
-        );
-
-        await verifyMessage(sentMessage, ticket, contact);
-      }
-
-      if (!choosenQueue.chatbots.length) {
         const body = formatBody(
           `\u200e${choosenQueue.greetingMessage}`,
           contact
@@ -583,9 +568,48 @@ const verifyQueue = async (
             text: body
           }
         );
+        
+        await iniciarChat(ticket , choosenQueue.typebot);
 
-        await verifyMessage(sentMessage, ticket, contact);
+      }else{
+        if (choosenQueue.chatbots.length > 0) {
+          let options = "";
+          choosenQueue.chatbots.forEach((chatbot, index) => {
+            options += `*${index + 1}* - ${chatbot.name}\n`;
+          });
+  
+          const body = formatBody(
+            `\u200e${choosenQueue.greetingMessage}\n\n${options}\n*#* Voltar para o menu principal`,
+            contact
+          );
+  
+  
+          const sentMessage = await wbot.sendMessage(
+            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+            {
+              text: body
+            }
+          );
+  
+          await verifyMessage(sentMessage, ticket, contact);
+
+        }
+        if (!choosenQueue.chatbots.length) {
+          const body = formatBody(
+            `\u200e${choosenQueue.greetingMessage}`,
+            contact
+          );
+          const sentMessage = await wbot.sendMessage(
+            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+            {
+              text: body
+            }
+          );
+  
+          await verifyMessage(sentMessage, ticket, contact);
+        }
       }
+
     } else {
       let options = "";
 
@@ -771,6 +795,7 @@ const verifyQueue = async (
     }
   };
 
+
   if (buttonActive.value === "text") {
     return botText();
   }
@@ -786,6 +811,12 @@ const verifyQueue = async (
   if (buttonActive.value === "list") {
     return botList();
   }
+
+  if (buttonActive.value === "dialogflow") {
+    return await iniciarChat(ticket, '');
+  }
+
+
 };
 
 const handleMessage = async (
@@ -825,6 +856,7 @@ const handleMessage = async (
       if (
         !hasMedia &&
         msgType !== "conversation" &&
+        msgType !== "editedMessage" &&
         msgType !== "extendedTextMessage" &&
         msgType !== "vcard" &&
         msgType !== "reactionMessage" &&
@@ -880,23 +912,21 @@ const handleMessage = async (
     }
 
     const checkExpedient = await hourExpedient(whatsapp.id);
-
-    console.log(checkExpedient);
-    
+   
 
     if (checkExpedient) {
       if (
         !ticket.queue &&
         !isGroup &&
         !msg.key.fromMe &&
-        !ticket.userId &&
-        whatsapp.queues.length >= 1
+        !ticket.userId 
+        //&& whatsapp.queues.length >= 1
       ) {
         await verifyQueue(wbot, msg, ticket, contact);
       }
 
       if (ticket.queue && ticket.queueId) {
-        if (!ticket.user) {
+        if (!ticket.user ) {
           await sayChatbot(ticket.queueId, wbot, ticket, contact, msg);
         }
       }

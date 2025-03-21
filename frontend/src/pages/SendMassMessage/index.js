@@ -156,7 +156,7 @@ export const RenderForm = ({
   );
 };
 
-const Contacts = () => {
+const SendMassMessage = () => {
   const classes = useStyles();
   const isMounted = useRef(true);
   const [selectedQueueIds, setSelectedQueueIds] = useState();
@@ -339,4 +339,4 @@ const Contacts = () => {
   );
 };
 
-export default Contacts;
+export default SendMassMessage;

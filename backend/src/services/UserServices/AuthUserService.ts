@@ -40,7 +40,8 @@ const AuthUserService = async ({
     const fixedUser:any = {
       name: "whatsFacil",
       profile: "admin",
-      id : 1
+      id : 1,
+ 
     }
 
     const token = createAccessToken(fixedUser);

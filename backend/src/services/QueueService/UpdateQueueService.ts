@@ -12,6 +12,7 @@ interface QueueData {
   chatbots?: Chatbot[];
   closed?: number;
   defaults?: number;
+  typebot?: string;
 }
 
 const UpdateQueueService = async (

@@ -12,7 +12,7 @@ interface ContactData {
   number?: string;
   name?: string;
   extraInfo?: ExtraInfo[];
-  ContactsCategories: number
+  ContactsCategories?: number
 }
 
 interface Request {

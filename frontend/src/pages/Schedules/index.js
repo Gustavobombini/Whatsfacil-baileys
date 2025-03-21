@@ -220,13 +220,13 @@ const Schedules = () => {
       <ConfirmationModal
         title={
           deletingSchedule &&
-          `${i18n.t("schedules.confirmationModal.deleteTitle")}`
+          `Deletar agendamento `
         }
         open={confirmModalOpen}
         onClose={setConfirmModalOpen}
         onConfirm={() => handleDeleteSchedule(deletingSchedule.id)}
       >
-        {i18n.t("schedules.confirmationModal.deleteMessage")}
+        `Deletar agendamento de ${deletingSchedule && deletingSchedule.contact.name}?`
       </ConfirmationModal>
       <ScheduleModal
         open={scheduleModalOpen}
@@ -239,7 +239,7 @@ const Schedules = () => {
         setContactId={setContactId}
       />
       <MainHeader>
-        <Title>{i18n.t("schedules.title")}</Title>
+        <Title>Agendamentos de Menssagens</Title>
         <MainHeaderButtonsWrapper>
           <TextField
             placeholder={i18n.t("contacts.searchPlaceholder")}
@@ -259,7 +259,7 @@ const Schedules = () => {
             color="primary"
             onClick={handleOpenScheduleModal}
           >
-            {i18n.t("schedules.buttons.add")}
+            Novo
           </Button>
         </MainHeaderButtonsWrapper>
       </MainHeader>
@@ -271,11 +271,11 @@ const Schedules = () => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell align="center">{i18n.t("schedules.table.contact")}</TableCell>
-              <TableCell align="center">{i18n.t("schedules.table.body")}</TableCell>
-              <TableCell align="center">{i18n.t("schedules.table.sendAt")}</TableCell>
-              <TableCell align="center">{i18n.t("schedules.table.status")}</TableCell>
-              <TableCell align="center">{i18n.t("schedules.table.actions")}</TableCell>
+              <TableCell align="center">Contato</TableCell>
+              <TableCell align="center">Texto</TableCell>
+              <TableCell align="center">Enviar em:</TableCell>
+              <TableCell align="center">Status</TableCell>
+              <TableCell align="center"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

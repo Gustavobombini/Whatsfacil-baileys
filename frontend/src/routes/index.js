@@ -8,16 +8,19 @@ import Tickets from "../pages/Tickets/";
 import Signup from "../pages/Signup/";
 import Login from "../pages/Login/";
 import Connections from "../pages/Connections/";
-import Settings from "../pages/Settings/";
+import Settings from "../pages/settings";
 import Users from "../pages/Users";
 import Contacts from "../pages/Contacts/";
 import QuickAnswers from "../pages/QuickAnswers/";
 import Queues from "../pages/Queues/";
 import InfoAdmin from "../pages/InfoAdmin";
 import InternalChat from "../pages/InternalChat";
+import ConfigMessage from "../pages/SettingMessage";
 import { AuthProvider } from "../context/Auth/AuthContext";
 import { WhatsAppsProvider } from "../context/WhatsApp/WhatsAppsContext";
 import Route from "./Route";
+import SendMassMessage from "../pages/SendMassMessage";
+import Schedules from "../pages/Schedules";
 
 
 const Routes = () => {
@@ -51,7 +54,10 @@ const Routes = () => {
                 component={QuickAnswers}
                 isPrivate
               />
-              <Route exact path="/Settings" element={Settings} isPrivate />
+              <Route exact path="/Settings" component={Settings} isPrivate />
+              <Route exact path="/SettingMessage" component={ConfigMessage} isPrivate />
+              <Route exact path="/SendMassMessage" component={SendMassMessage} isPrivate />
+              <Route exact path="/Schedules" component={Schedules} isPrivate />
               <Route exact path="/Queues" component={Queues} isPrivate />
               <Route exact path="/InfoAdmin" component={InfoAdmin} isPrivate />
             </LoggedInLayout>

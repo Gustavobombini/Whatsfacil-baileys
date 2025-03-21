@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {useContext, useState, useEffect, useRef } from "react";
 
 import * as Yup from "yup";
 import { Formik, FieldArray, Form, Field } from "formik";
@@ -16,12 +16,14 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { AuthContext } from "../../context/Auth/AuthContext";
 
 import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import { InputLabel, MenuItem, Select } from "@material-ui/core";
+
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -64,6 +66,7 @@ const ContactSchema = Yup.object().shape({
 
 const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 	const classes = useStyles();
+	const { user } = useContext(AuthContext);
 	const isMounted = useRef(true);
 
 	const initialState = {
@@ -207,12 +210,13 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 									/>
 								</div>
 								<div>
-									<InputLabel id="label-categories">
+									<InputLabel id="label-categories" className="mt-1 mb-2">
 										Categoria
 									</InputLabel>
 									<Select
 										label="Categoria"
 										value={Categories}
+										disabled={Categories == 10 && user.profile != 'admin'  ? true : false}
 										fullWidth
 										margin="dense"
 										variant="outlined"

@@ -154,6 +154,7 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
         chatbots: [],
         closed: 0,
         defaults: 0,
+        typebot: "",
       });
     };
   }, [queueId, open]);
@@ -427,6 +428,38 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
                     margin="dense"
                   />
                 </div>
+
+                <div className="row mt-3">
+                  <div className="col">
+                    <Typography variant="subtitle1">
+                      TypeBot
+                      <CustomToolTip
+                          title="Adicione seu ID TypeBot"
+                          content="O ID TypeBot é o identificador do bot no TypeBot, ele é necessário para que o bot funcione corretamente"
+                        >
+                          <HelpOutlineOutlinedIcon
+                            style={{ marginLeft: "14px" }}
+                            fontSize="small"
+                          />
+                        </CustomToolTip>
+                    </Typography>
+                    </div>
+                </div>
+                <div className="row mb-3 mt-1">
+                  <div className="col">
+                      <Field
+                        as={TextField}
+                        label="TypeBot"
+                        name="typebot"
+                        id="typebot"
+                        variant="outlined"
+                        margin="dense"
+                        className={classes.textField}
+                      />
+                      </div>
+                </div>
+
+
 
                 <Typography variant="subtitle1">
                   Opções

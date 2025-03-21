@@ -11,6 +11,8 @@ import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
 import ContactPhoneOutlinedIcon from "@material-ui/icons/ContactPhoneOutlined";
 import AccountTreeOutlinedIcon from "@material-ui/icons/AccountTreeOutlined";
 import QuestionAnswerOutlinedIcon from "@material-ui/icons/QuestionAnswerOutlined";
+import SettingsIcon from '@material-ui/icons/Settings';
+import CalendatTodayIcon from '@material-ui/icons/CalendarToday';
 import BarCharIcon from "@material-ui/icons//BarChart"
 import { i18n } from "../translate/i18n";
 import { WhatsAppsContext } from "../context/WhatsApp/WhatsAppsContext";
@@ -239,10 +241,20 @@ const MainListItems = (props) => {
                   }
                 />
                 <ListItemLink
-                to="/infoAdmin"
-                primary="Informações"
-                icon={<BarCharIcon />}
-              />
+                  to="/settings"
+                  primary={i18n.t("mainDrawer.listItems.settings")}
+                  icon={<SettingsIcon />}
+                />
+                <ListItemLink
+                  to="/Schedules"
+                  primary={'Agendamentos'}
+                  icon={<CalendatTodayIcon />}
+                />
+                <ListItemLink
+                  to="/infoAdmin"
+                  primary="Informações"
+                  icon={<BarCharIcon />}
+                />
              
             </>
           )}

@@ -5,7 +5,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import * as Sentry from "@sentry/node";
-import { messageQueue, sendScheduledMessages } from "./queues";
+
 
 import "./database";
 import uploadConfig from "./config/upload";
@@ -38,10 +38,6 @@ app.use(
   })
 );
 
-app.set("queues", {
-  messageQueue,
-  sendScheduledMessages
-})
 
 app.use(Sentry.Handlers.requestHandler());
 app.use("/public", express.static(uploadConfig.directory));

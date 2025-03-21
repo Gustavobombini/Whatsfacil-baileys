@@ -12,6 +12,8 @@ interface ScheduleData {
   contactId?: number;
   ticketId?: number;
   userId?: number;
+  whatsappId?:number;
+  status?: string
 }
 
 interface Request {
@@ -19,7 +21,7 @@ interface Request {
   id: string | number;
 }
 
-const UpdateUserService = async ({
+const UpdateScheduleService = async ({
   scheduleData,
   id
 }: Request): Promise<Schedule | undefined> => {
@@ -36,6 +38,8 @@ const UpdateUserService = async ({
     contactId,
     ticketId,
     userId,
+    whatsappId,
+    status 
   } = scheduleData;
 
   try {
@@ -51,10 +55,12 @@ const UpdateUserService = async ({
     contactId,
     ticketId,
     userId,
+    whatsappId,
+    status
   });
 
   await schedule.reload();
   return schedule;
 };
 
-export default UpdateUserService;
+export default UpdateScheduleService;

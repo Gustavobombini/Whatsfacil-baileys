@@ -8,6 +8,7 @@ import ListService from "../services/ScheduleServices/ListService";
 import UpdateService from "../services/ScheduleServices/UpdateService";
 import ShowService from "../services/ScheduleServices/ShowService";
 import DeleteService from "../services/ScheduleServices/DeleteService";
+import { log } from "node:console";
 
 type IndexQuery = {
   searchParam?: string;
@@ -34,14 +35,19 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     body,
     sendAt,
     contactId,
-    userId
+    userId,
+    whatsappId
   } = req.body;
+
+
+  
 
   const schedule = await CreateService({
     body,
     sendAt,
     contactId,
-    userId
+    userId,
+    whatsappId
   });
 
   const io = getIO();

@@ -15,6 +15,7 @@ import Whatsapp from "../../models/Whatsapp";
 import { logger } from "../../utils/logger";
 import createOrUpdateBaileysService from "../BaileysServices/CreateOrUpdateBaileysService";
 import CreateMessageService from "../MessageServices/CreateMessageService";
+import { log } from "console";
 
 type Session = WASocket & {
   id?: number;
@@ -40,15 +41,16 @@ const wbotMonitor = async (
         });
 
         if (sendMsgCall.value === "disabled") {
-          await wbot.sendMessage(node.attrs.from, {
+          await wbot.sendMessage(node.attrs.from.replace(/:.*/, "@s.whatsapp.net"), {
             text: "*Mensagem Automática:*\nAs chamadas de voz e vídeo estão desabilitas para esse WhatsApp, favor enviar uma mensagem de texto. Obrigado"
           });
 
-          const number = node.attrs.from.replace(/\D/g, "");
+          const number = node.attrs.from.replace(/:.*/, "")
 
           const contact = await Contact.findOne({
             where: { number }
           });
+
 
           const ticket = await Ticket.findOne({
             where: {

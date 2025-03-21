@@ -23,7 +23,7 @@ const ShowTicketService = async (id: string | number): Promise<Ticket> => {
       {
         model: Queue,
         as: "queue",
-        attributes: ["id", "name", "color", "defaults", "closed"]
+        attributes: ["id", "name", "color", "defaults", "closed", "typebot"],
       },
       {
         model: Whatsapp,

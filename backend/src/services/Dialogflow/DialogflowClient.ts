@@ -6,6 +6,8 @@ import SendWhatsAppMedia from "../WbotServices/SendWhatsAppMedia";
 import axios from "axios";
 import fs from "fs";
 import ytdl from "@distube/ytdl-core";
+import Queue from "../../models/Queue";
+import ShowQueueService from "../QueueService/ShowQueueService";
 
 
 type Message = {
@@ -36,7 +38,7 @@ const downloadFile = async (url, outputPath) => {
 
 
 
-const iniciarChat = async (ticket , typeId?) => {
+const iniciarChat = async (ticket, queueId?) => {
   const extractText = (nodes: any[]): string =>
     nodes.reduce((acc, node) => {
       if (node.text) return acc + node.text; 
@@ -44,8 +46,16 @@ const iniciarChat = async (ticket , typeId?) => {
       return acc;
     }, "");
 
+    let typeId = null;
+    
+    if(queueId){
+      const queue = await ShowQueueService(queueId);
+      typeId = queue.typebot;
+    }
+
   try {
     if (!ticket.typebot) {
+      
 
       logger.info("Iniciando chat com o Typebot", { TypebotId: typeId });
 
@@ -81,6 +91,7 @@ const iniciarChat = async (ticket , typeId?) => {
               .join("");
 
             if (text) {
+              console.log("Mensagem recebida do Typebot:", text);
               SendWhatsAppMessage({ body: text, ticket: ticket });
             }
 
@@ -141,7 +152,7 @@ const iniciarChat = async (ticket , typeId?) => {
           }
         }
       } 
-    } else if(ticket.typebot !== 'end') {
+    } else if (ticket.typebot && ticket.lastMessage && ticket.typebot !== 'end') {
 
       const response = await fetch(`https://typebot.io/api/v1/sessions/${ticket.typebot}/continueChat`, {
         method: "POST",
@@ -152,6 +163,7 @@ const iniciarChat = async (ticket , typeId?) => {
           message: ticket.lastMessage
         })
       });
+
 
       if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
 
@@ -171,6 +183,8 @@ const iniciarChat = async (ticket , typeId?) => {
               .join("");
 
             if (text) {
+              console.log("Mensagem recebida do Typebot:", text);
+              
               SendWhatsAppMessage({ body: text, ticket: ticket });
 
             }

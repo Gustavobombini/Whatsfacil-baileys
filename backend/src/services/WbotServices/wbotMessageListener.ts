@@ -562,14 +562,21 @@ const verifyQueue = async (
           `\u200e${choosenQueue.greetingMessage}`,
           contact
         );
-        const sentMessage = await wbot.sendMessage(
-          `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
-          {
-            text: body
-          }
-        );
+
+        if(body){
+          const sentMessage = await wbot.sendMessage(
+            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+            {
+              text: body
+            }
+          );
+        }
+      
+
+        console.log("Entrou no iniciar chat", choosenQueue.id);
         
-        await iniciarChat(ticket , choosenQueue.typebot);
+        
+        await iniciarChat(ticket, choosenQueue.id);
 
       }else{
         if (choosenQueue.chatbots.length > 0) {

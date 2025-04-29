@@ -195,7 +195,7 @@ const backToMainMenu = async (
   ticket: Ticket
 ) => {
   await UpdateTicketService({
-    ticketData: { queueId: null },
+    ticketData: { queueId: null, typebot: null },
     ticketId: ticket.id
   });
 
@@ -312,10 +312,7 @@ export const sayChatbot = async (
     msg?.message?.listResponseMessage?.singleSelectReply.selectedRowId ||
     getBodyMessage(msg);
 
-    
-  if(!msg.key.fromMe){
-    iniciarChat(ticket, '');
-  }
+
     
   if (!queueId && selectedOption && msg.key.fromMe) return;
  
@@ -348,6 +345,12 @@ export const sayChatbot = async (
         ticketId: ticket.id, 		
       })
     };
+
+       
+
+    if(!msg.key.fromMe){
+      await iniciarChat(ticket, choosenQueue?.id_chatbot);
+    }
 
     if (!choosenQueue?.greetingMessage) {
       await DeleteDialogChatBotsServices(contact.id);

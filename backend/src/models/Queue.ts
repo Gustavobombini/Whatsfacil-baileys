@@ -39,9 +39,6 @@ class Queue extends Model<Queue> {
   greetingMessage: string;
 
   @Column
-  file: string;
-
-  @Column
   typebot: string;
 
   @Column

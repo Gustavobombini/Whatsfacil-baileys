@@ -1,0 +1,46 @@
+# Whatsfacil-Baileys
+
+Whatsfacil-Baileys é um projeto que utiliza a biblioteca [Baileys](https://github.com/WhiskeySockets/Baileys) para facilitar a integração e automação com o WhatsApp Web via Node.js.
+
+## Funcionalidades
+
+- Envio e recebimento de mensagens
+- Suporte a grupos e contatos
+- Envio de arquivos multimídia (imagens, áudios, documentos)
+- Gerenciamento de sessões
+
+## Instalação
+
+1. Clone este repositório:
+    ```
+    git clone https://github.com/seu-usuario/Whatsfacil-baileys.git
+    ```
+2. Instale as dependências:
+    ```
+    npm install
+    ```
+3. No Backend
+    ````
+    npm install
+    npm run build
+    npx sequelize db:migrate
+    npx sequelize db:seed:all
+    ```
+4. No FrontEnd
+   ````
+    npm install
+    npm run build 
+
+    ````
+
+## Uso
+
+1. Inicie o projeto em ambas as pastas (FrontEnd/Backend):
+    ```
+    npm start 
+    ```
+2. Siga as instruções no terminal para conectar ao WhatsApp.
+
+## Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.

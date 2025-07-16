@@ -39,7 +39,7 @@ const CreateOrUpdateContactService = async ({
         contact
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 
@@ -59,7 +59,7 @@ const CreateOrUpdateContactService = async ({
         contact
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 

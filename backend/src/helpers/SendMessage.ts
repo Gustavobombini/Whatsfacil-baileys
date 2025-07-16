@@ -23,14 +23,14 @@ export const SendMessage = async (
     const jid = `${messageData.number}@s.whatsapp.net`;
     let message: any;
     const body = `\u200e${messageData.body}`;
-    console.log("envio de mensagem");
+    //console.log("envio de mensagem");
     if (messageData.mediaPath) {
       const media = {
         path: messageData.mediaPath,
         mimetype: mime.lookup(messageData.mediaPath)
       } as Express.Multer.File;
 
-      //console.log(media);
+      ////console.log(media);
       const pathMedia = messageData.mediaPath;
       const typeMessage = media.mimetype.split("/")[0];
       let options: AnyMessageContent;
@@ -83,9 +83,9 @@ export const SendMessage = async (
         ...options
       });
 
-      //console.log(message);
+      ////console.log(message);
     } else {
-      //console.log(body);
+      ////console.log(body);
       message = await wbot.sendMessage(jid, {
         text: body
       });
@@ -93,7 +93,7 @@ export const SendMessage = async (
 
     return message;
   } catch (err: any) {
-    console.log(err);
+    //console.log(err);
     throw new Error(err);
   }
 };

@@ -2,9 +2,11 @@ import makeWASocket, {
   AuthenticationState,
   DisconnectReason,
   fetchLatestBaileysVersion,
-  makeInMemoryStore,
-  WASocket
+  WASocket,
+  makeCacheableSignalKeyStore,
 } from "@whiskeysockets/baileys";
+
+import { cacheGet } from "../utils/messageCache";
 
 import { Boom } from "@hapi/boom";
 import MAIN_LOGGER from "@whiskeysockets/baileys/lib/Utils/logger";
@@ -82,11 +84,10 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         let retriesQrCode = 0;
 
         let wsocket: Session = null;
-        const store = makeInMemoryStore({
-          logger: loggerBaileys
-        });
-
         const { state, saveCreds } = await useMultiFileAuthState(whatsapp);
+        
+        const store = makeCacheableSignalKeyStore(state.keys, loggerBaileys);
+
 
         wsocket = makeWASocket({
           logger: loggerBaileys,
@@ -94,11 +95,9 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
           auth: state as AuthenticationState,
           version,
           msgRetryCounterCache,
-          getMessage: async key => {
-            if (store) {
-              const msg = await store.loadMessage(key.remoteJid!, key.id!);
-              return msg?.message || undefined;
-            }
+           getMessage: async key => {
+            const cached = cacheGet(key.id);
+            return cached?.message;
           }
         });
 
@@ -237,11 +236,9 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
 
         wsocket.ev.on("creds.update", saveCreds);
 
-        wsocket.store = store;
-        store.bind(wsocket.ev);
       })();
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       reject(error);
     }
   });

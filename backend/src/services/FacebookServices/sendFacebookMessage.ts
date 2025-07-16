@@ -17,7 +17,7 @@ const SendWhatsAppMessage = async ({ body, ticket }: Request): Promise<any> => {
     await ticket.update({ lastMessage: body });
     sendText(number, formatBody(body, ticket.contact));
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     throw new AppError("ERR_SENDING_FACEBOOK_MSG");
   }
 };

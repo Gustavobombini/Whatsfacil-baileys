@@ -1,12 +1,9 @@
-import { log } from "console";
+
 import { logger } from "../../utils/logger";
-import { verifyMessage } from "../WbotServices/wbotMessageListener";
 import SendWhatsAppMessage from "../WbotServices/SendWhatsAppMessage";
 import SendWhatsAppMedia from "../WbotServices/SendWhatsAppMedia";
 import axios from "axios";
 import fs from "fs";
-import ytdl from "@distube/ytdl-core";
-import Queue from "../../models/Queue";
 import ShowQueueService from "../QueueService/ShowQueueService";
 
 
@@ -74,7 +71,7 @@ const iniciarChat = async (ticket, queueId?) => {
       });
 
 
-      if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
+      if (!response.ok) throw new Error(`Erro na Typebot: ${response.status}`);
 
       const data = await response.json();
 
@@ -91,7 +88,7 @@ const iniciarChat = async (ticket, queueId?) => {
               .join("");
 
             if (text) {
-              console.log("Mensagem recebida do Typebot:", text);
+              //console.log("Mensagem recebida do Typebot:", text);
               SendWhatsAppMessage({ body: text, ticket: ticket });
             }
 
@@ -183,7 +180,7 @@ const iniciarChat = async (ticket, queueId?) => {
               .join("");
 
             if (text) {
-              console.log("Mensagem recebida do Typebot:", text);
+              //console.log("Mensagem recebida do Typebot:", text);
               
               SendWhatsAppMessage({ body: text, ticket: ticket });
 

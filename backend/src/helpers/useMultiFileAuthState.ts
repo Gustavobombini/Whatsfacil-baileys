@@ -32,7 +32,7 @@ export const useMultiFileAuthState = async (
         });
       }
     } catch (error) {
-      console.log("writeData error", error);
+      //console.log("writeData error", error);
       return null;
     }
   };
@@ -51,7 +51,7 @@ export const useMultiFileAuthState = async (
       }
       return null;
     } catch (error) {
-      console.log("Read data error", error);
+      //console.log("Read data error", error);
       return null;
     }
   };
@@ -65,7 +65,7 @@ export const useMultiFileAuthState = async (
         }
       });
     } catch (error) {
-      console.log("removeData", error);
+      //console.log("removeData", error);
     }
   };
 

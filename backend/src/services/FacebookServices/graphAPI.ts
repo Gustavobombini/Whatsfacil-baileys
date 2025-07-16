@@ -45,7 +45,7 @@ export const sendText = async (id: string, text: string): Promise<void> => {
       }
     });
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 };
 
@@ -80,7 +80,7 @@ export const sendAttachment = async (
       headers: formData.getHeaders()
     });
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 };
 
@@ -96,10 +96,10 @@ export const getProfile = async (id: string): Promise<any> => {
   try {
     const { data } = await apiBase.get(id);
 
-    console.log(data);
+    //console.log(data);
 
     return data;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 };

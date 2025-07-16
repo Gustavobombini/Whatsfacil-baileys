@@ -50,7 +50,7 @@ const AddUserModal = ({ modalOpen, onClose, ticketid, ticketWhatsappId }) => {
 		  const { data } = await api.get("/users/");
 		  setUsers(data.users)
 		} catch (err) {
-		  console.log(err);
+		  //console.log(err);
 		}
 	  };
 	

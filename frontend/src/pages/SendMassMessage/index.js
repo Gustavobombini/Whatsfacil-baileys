@@ -234,7 +234,7 @@ const SendMassMessage = () => {
         });
       });
       try {
-       console.log(listMessage)
+       //console.log(listMessage)
 
        await api.post("/bulkMessage", listMessage);
         handleClose();

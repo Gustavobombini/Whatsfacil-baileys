@@ -9,7 +9,7 @@ const ShowWhatsAppService = async (id: string | number): Promise<Whatsapp> => {
       {
         model: Queue,
         as: "queues",
-        attributes: ["id", "name", "color", "greetingMessage", "typebot"],
+        attributes: ["id", "name", "color", "greetingMessage", "typebot", "api"],
         include: [
           {
             model: Chatbot,

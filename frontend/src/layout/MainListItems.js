@@ -76,14 +76,14 @@ const MainListItems = (props) => {
         params: { receiving_user: user.id, type: 2 } 
       });
       setchat(loadContact.data.data.length)
-      console.log(loadContact.data.data.length);
+      //console.log(loadContact.data.data.length);
     }
     fetchUnreadMsg()
 
   }, 60000)
 
   if(user.profile === "custom"){
-    console.log(user);
+    //console.log(user);
     const itens = user.access.split(',')
     return (
       <>

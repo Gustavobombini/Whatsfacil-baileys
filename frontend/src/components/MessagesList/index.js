@@ -430,8 +430,8 @@ const MessagesList = ({ ticketId, isGroup }) => {
       return <LocationPreview image={imageLocation} link={linkLocation} description={descriptionLocation} />
     }
     else if (message.mediaType === "vcard" || message.mediaType === "contactMessage") {
-      //console.log("vcard")
-      //console.log(message)
+      ////console.log("vcard")
+      ////console.log(message)
       let array = message.body.split("\n");
       let obj = [];
       let contact = "";
@@ -450,8 +450,8 @@ const MessagesList = ({ ticketId, isGroup }) => {
       return <VcardPreview contact={contact} numbers={obj[0]?.number} />
     }
     /*else if (message.mediaType === "multi_vcard") {
-      console.log("multi_vcard")
-      console.log(message)
+      //console.log("multi_vcard")
+      //console.log(message)
     	
       if(message.body !== null && message.body !== "") {
         let newBody = JSON.parse(message.body)

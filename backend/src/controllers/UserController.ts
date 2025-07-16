@@ -86,7 +86,7 @@ export const update = async (
   const userData = req.body;
   
   const user = await UpdateUserService({ userData, userId });
-  console.log(userData)
+
   const io = getIO();
   io.emit("user", {
     action: "update",

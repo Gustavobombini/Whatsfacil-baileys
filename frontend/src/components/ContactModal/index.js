@@ -131,7 +131,7 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 		
 		values.ContactsCategories = Categories;
 		
-		console.log(values);
+		//console.log(values);
 		try {
 			
 			if (contactId) {

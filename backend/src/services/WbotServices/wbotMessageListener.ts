@@ -17,6 +17,8 @@ import {
   WAMessageStubType
 } from "@whiskeysockets/baileys";
 
+import { cacheSet } from "../../utils/messageCache";
+
 import Contact from "../../models/Contact";
 import Ticket from "../../models/Ticket";
 import Message from "../../models/Message";
@@ -36,6 +38,7 @@ import { sayChatbot } from "./ChatBotListener";
 import hourExpedient from "./hourExpedient";
 import { log } from "console";
 import iniciarChat  from "../../services/Dialogflow/DialogflowClient";
+import iniciarAPI from "../../services/ApiService/Api"
 
 type Session = WASocket & {
   id?: number;
@@ -192,7 +195,7 @@ export const getBodyMessage = (msg: proto.IWebMessageInfo): string | null => {
   } catch (error) {
     Sentry.setExtra("Error getTypeMessage", { msg, BodyMsg: msg.message });
     Sentry.captureException(error);
-    console.log(error);
+    //console.log(error);
   }
 };
 
@@ -563,6 +566,23 @@ const verifyQueue = async (
           contact
         );
 
+        if(choosenQueue.greetingMessage){
+          const sentMessage = await wbot.sendMessage(
+            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+            {
+              text: body
+            }
+          );
+        }
+              
+        await iniciarChat(ticket, choosenQueue.id);
+
+      }else if(choosenQueue.api){
+          const body = formatBody(
+          `\u200e${choosenQueue.greetingMessage}`,
+          contact
+        );
+
         if(body){
           const sentMessage = await wbot.sendMessage(
             `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
@@ -571,13 +591,8 @@ const verifyQueue = async (
             }
           );
         }
-      
-
-        console.log("Entrou no iniciar chat", choosenQueue.id);
-        
-        
-        await iniciarChat(ticket, choosenQueue.id);
-
+              
+        await iniciarAPI(ticket, choosenQueue.id);
       }else{
         if (choosenQueue.chatbots.length > 0) {
           let options = "";
@@ -643,7 +658,7 @@ const verifyQueue = async (
         3000,
         ticket.id
       );
-
+      
       debouncedSentMessage();
     }
   };
@@ -889,11 +904,7 @@ const handleMessage = async (
     }
     const whatsapp = await ShowWhatsAppService(wbot.id!);
 
-    const count = wbot.store.chats.get(
-      msg.key.remoteJid || msg.key.participant
-    );
-
-    const unreadMessages = msg.key.fromMe ? 0 : count?.unreadCount || 1;
+    const unreadMessages = msg.key.fromMe ? 0 : 1;
 
     const contact = await verifyContact(msgContact, wbot);
 
@@ -963,7 +974,7 @@ const handleMessage = async (
       await verifyMessage(sentMessage, ticket, contact);
     }
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     Sentry.captureException(err);
     logger.error(`Error handling whatsapp message: Err: ${err}`);
   }
@@ -1015,31 +1026,33 @@ const filterMessages = (msg: WAMessage): boolean => {
   return true;
 };
 
-const wbotMessageListener = async (wbot: Session): Promise<void> => {
-  try {
-    wbot.ev.on("messaging-history.set", ({ messages }) => {
-      console.log('got messages', messages)
-  })
-
+  const wbotMessageListener = async (wbot: Session): Promise<void> => {
+    try {
+      wbot.ev.on("messaging-history.set", ({ messages }) => {
+        //console.log('got messages', messages)
+    })
     wbot.ev.on("messages.upsert", async (messageUpsert: ImessageUpsert) => {
-      const messages = messageUpsert.messages
-        .filter(filterMessages)
-        .map(msg => msg);
+      const messages = messageUpsert.messages.filter(filterMessages);
+      if (!messages.length) return;
 
-      if (!messages) return;
+      for (const message of messages) {
+        // ➜ guarda no cache
+        cacheSet(message);
 
-      messages.forEach(async (message: proto.IWebMessageInfo) => {
         if (
           wbot.type === "md" &&
           !message.key.fromMe &&
           messageUpsert.type === "notify"
         ) {
-          (wbot as WASocket)!.readMessages([message.key]);
+          (wbot as WASocket).readMessages([message.key]);
         }
-        // console.log(JSON.stringify(message));
+
         handleMessage(message, wbot);
-      });
+      }
     });
+    
+
+    
 
     wbot.ev.on("messages.update", (messageUpdate: WAMessageUpdate[]) => {
       if (messageUpdate.length === 0) return;

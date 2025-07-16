@@ -11,6 +11,7 @@ interface QueueData {
   closed?: number;
   defaults?: number;
   typebot?: string;
+  api?: string
 }
 
 const CreateQueueService = async (queueData: QueueData): Promise<Queue> => {

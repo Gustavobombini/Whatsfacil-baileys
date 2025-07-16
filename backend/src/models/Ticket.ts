@@ -49,6 +49,10 @@ class Ticket extends Model<Ticket> {
   @Column
   typebot: string;
 
+  @Default(null)
+  @Column
+  api: string;
+
   @Default("whatsapp")
   @Column
   channel: string;

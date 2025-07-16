@@ -19,7 +19,7 @@ const InternalChat = () => {
   const history = useHistory();
 
   socket.on("connect", () => {
-    console.log("Conectado ao servidor Socket.IO");
+    //console.log("Conectado ao servidor Socket.IO");
   });
 
 
@@ -44,7 +44,7 @@ const InternalChat = () => {
           })
         }
       }catch{
-        console.log('Erro ao carregar mensagens');
+        //console.log('Erro ao carregar mensagens');
       }
     }
 
@@ -105,7 +105,7 @@ const InternalChat = () => {
       setloadUpload(false)
 
     }catch{
-      console.log("não foi possivel enviar o arquivo");
+      //console.log("não foi possivel enviar o arquivo");
     }
   }
 
@@ -148,7 +148,7 @@ const InternalChat = () => {
       });
         setContacts(data.data);
     } catch (err) {
-      console.log(err);
+      //console.log(err);
     }
   };
 

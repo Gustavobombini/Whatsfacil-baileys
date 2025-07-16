@@ -45,7 +45,7 @@ const UpdateQueueService = async (
           
           if (value == 1) {
             const queueWithSameName = await Queue.findOne({
-              where: { defaults: value }
+              where: { defaults: value ,  id: { [Op.not]: queueId }  }
             });
 
             return !queueWithSameName;

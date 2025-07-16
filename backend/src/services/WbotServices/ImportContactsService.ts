@@ -31,7 +31,7 @@ const ImportContactsService = async (userId: number): Promise<void> => {
       try {
         await CreateContactService({ number, name });
       } catch (error) {
-        console.log(error);
+        //console.log(error);
         logger.warn(
           `Could not get whatsapp contacts from phone. Err: ${error}`
         );

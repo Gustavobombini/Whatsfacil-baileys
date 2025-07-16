@@ -42,6 +42,9 @@ class Queue extends Model<Queue> {
   typebot: string;
 
   @Column
+  api: string
+
+  @Column
   closed: number;
 
   @Column

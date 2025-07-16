@@ -191,7 +191,7 @@ const processMessage = async (whatsappId: number) => {
           sendToday: 0
         });
       } else if (setting.sendToday >= setting.limit) {
-        console.log(`Limite de envio atingido ${whatsappId}`);
+        //console.log(`Limite de envio atingido ${whatsappId}`);
         return;
       }
 

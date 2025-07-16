@@ -51,26 +51,26 @@ const hourExpedient = async (whatsappId) => {
           verifyWeekendWorkHour
         ) {
           // se for dia de semana e esta dentro do expediente definido
-          // console.log("dentro do fim de semana e expediente definidos")
+          // //console.log("dentro do fim de semana e expediente definidos")
           resulta = "true";
         } else if (
           weekDay !== "Saturday" &&
           weekDay !== "Sunday" &&
           verifyWorkHour
         ) {
-          // console.log("dentro do dia da semana e expediente definidos");
+          // //console.log("dentro do dia da semana e expediente definidos");
           resulta = "true";
         } else {
-          // console.log("fora do expediente da semana e do fim de semana");
+          // //console.log("fora do expediente da semana e do fim de semana");
           resulta = "false";
         }
       } else {
-        // console.log("Dia sem expediente 1");
+        // //console.log("Dia sem expediente 1");
         resulta = "false";
       }
     } else {
       // Não definiu expediente, deixa o sistema 24h funcionando completo com direcionamentos a atendentes
-      // console.log("Horario Expediente Desativado");
+      // //console.log("Horario Expediente Desativado");
       resulta = "true";
     }
  

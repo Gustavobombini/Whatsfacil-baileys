@@ -17,6 +17,7 @@ import User from "../../models/User";
 import Setting from "../../models/Setting";
 import iniciarChat from "../Dialogflow/DialogflowClient";
 import { logger } from "../../utils/logger";
+import iniciarAPI from "../ApiService/Api";
 
 type Session = WASocket & {
   id?: number;
@@ -195,7 +196,7 @@ const backToMainMenu = async (
   ticket: Ticket
 ) => {
   await UpdateTicketService({
-    ticketData: { queueId: null, typebot: null },
+    ticketData: { queueId: null, typebot: '', api: '' },
     ticketId: ticket.id
   });
 
@@ -341,15 +342,19 @@ export const sayChatbot = async (
 
      if(choosenQueue?.isAgent){		
       await UpdateTicketService({		
-        ticketData: { queueId: choosenQueue.id_chatbot },		
+        ticketData: { queueId: choosenQueue.id_chatbot, api: '', typebot: '' },		
         ticketId: ticket.id, 		
       })
     };
 
-       
+      
 
-    if(!msg.key.fromMe){
+    if(!msg.key.fromMe && ticket.typebot){
       await iniciarChat(ticket, choosenQueue?.id_chatbot);
+    }
+
+    if(!msg.key.fromMe && ticket.api){
+      await iniciarAPI(ticket, choosenQueue?.id_chatbot);
     }
 
     if (!choosenQueue?.greetingMessage) {
@@ -385,7 +390,7 @@ export const sayChatbot = async (
   if (getStageBot) {
     const selected = isNumeric(selectedOption) ? selectedOption : 1;
     const bots = await ShowChatBotServices(getStageBot.chatbotId);
-    console.log("getStageBot", selected);
+    //console.log("getStageBot", selected);
 
     const choosenQueue = bots.options[+selected - 1]
       ? bots.options[+selected - 1]
@@ -397,7 +402,7 @@ export const sayChatbot = async (
    	      ticketId: ticket.id, 		
         })
 
-    console.log("choosenQueue", choosenQueue);
+    //console.log("choosenQueue", choosenQueue);
 
     
 

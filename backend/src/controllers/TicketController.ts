@@ -202,6 +202,8 @@ export const addUser = async (  req: Request,   res: Response): Promise<Response
         queueId: queue,
         verify: 1
       }); 
+
+      await newticket.update({whatsappId: ticket.whatsappId});
     
       const io = getIO();
           

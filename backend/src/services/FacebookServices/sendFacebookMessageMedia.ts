@@ -35,7 +35,7 @@ const sendFacebookMessageMedia = async ({
     //   : undefined;
 
     const type = typeAttachment(media);
-    console.log(`Sending ${type} to ${ticket.contact.id}`);
+    //console.log(`Sending ${type} to ${ticket.contact.id}`);
     const sendMessage = await sendAttachment(
       ticket.contact.number,
       fs.createReadStream(media.path),
@@ -48,7 +48,7 @@ const sendFacebookMessageMedia = async ({
 
     return sendMessage;
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     throw new AppError("ERR_SENDING_FACEBOOK_MSG");
   }
 };

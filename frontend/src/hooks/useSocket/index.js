@@ -16,11 +16,11 @@ const useProvideSocket = () => {
 
   useEffect(() => {
     socket.on("ready", () => {
-      console.log("connected");
+      //console.log("connected");
     });
 
     socket.on("tokenExpired", async (message) => {
-      console.log(message); // Exibe a mensagem "Token expirado. Por favor, renove seu token."
+      //console.log(message); // Exibe a mensagem "Token expirado. Por favor, renove seu token."
       
       // Lógica para renovar o token
       try {

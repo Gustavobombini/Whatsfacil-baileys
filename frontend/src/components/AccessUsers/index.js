@@ -23,7 +23,7 @@ const AccessUsers = ({ selectedAccess, onChange }) => {
     const handleChange = e => {
         setValoresSelecionados(e.target.value);
         const String = e.target.value.map(numero => `${numero}`).join(",");
-        console.log(String)
+        //console.log(String)
         onChange(String);
 	};
 

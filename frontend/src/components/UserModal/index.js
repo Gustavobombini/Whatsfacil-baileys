@@ -111,7 +111,7 @@ const UserModal = ({ open, onClose, userId }) => {
 				const userQueueIds = data.queues?.map(queue => queue.id);
 				setSelectedQueueIds(userQueueIds);
 				setSelectedAccess(data.access)
-				console.log(data);
+				//console.log(data);
 				setWhatsappId(data.whatsappId ? data.whatsappId : '');
 			} catch (err) {
 				toastError(err);
@@ -133,10 +133,10 @@ const UserModal = ({ open, onClose, userId }) => {
 		try {
 			if (userId) {
 				await api.put(`/users/${userId}`, userData);
-				console.log(values)
+				//console.log(values)
 			} else {
 				await api.post("/users", userData);
-				console.log(values)
+				//console.log(values)
 			}
 			toast.success(i18n.t("userModal.success"));
 		} catch (err) {

@@ -71,7 +71,7 @@ const InfoAdmin = () => {
         const { data } = await api.get("/info", {
           params: { data1: data1, data2: data2 } 
         });
-        console.log(data);
+        //console.log(data);
         setDados(data.data)
 
         const prevqueue = []
@@ -176,7 +176,7 @@ const InfoAdmin = () => {
                   }}
                   onChange={(e) => {
                     setData2(e.target.value);
-                    console.log(e.target.value)
+                    //console.log(e.target.value)
                   }}
                 />
               </Grid>

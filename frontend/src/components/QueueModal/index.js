@@ -127,7 +127,7 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
     const loadQueues = async () => {
       const list = await findAllQueues();
       setAllQueues(list);
-      console.log(list);
+      //console.log(list);
       setQueues(list);
     }
     loadQueues();
@@ -160,8 +160,8 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
   }, [queueId, open]);
 
   useEffect(() => {
-    console.log(activeStep);
-    console.log(isNameEdit);
+    //console.log(activeStep);
+    //console.log(isNameEdit);
 
     if (activeStep === isNameEdit) {
       setIsStepContent(false);
@@ -198,7 +198,7 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
 
   const handleSaveQueue = async (values) => {
     try {
-      console.log(values);
+      //console.log(values);
       if (queueId) {
         await api.put(`/queue/${queueId}`, values);
       } else {
@@ -216,7 +216,7 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
   //   try {
   //     if (queueId) {
   //       const { data } = await api.put(`/queue/${queueId}`, values);
-  //       console.log(data)
+  //       //console.log(data)
   //       setQueue(initialState);
   //       setQueue(data);
   //       setIsNamedEdit(null);
@@ -225,7 +225,7 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
   //       toast.success("Queue saved successfully");
   //     } else {
   //       const { data } = await api.post("/queue", values);
-  //       console.log(data)
+  //       //console.log(data)
   //       setQueue(initialState);
   //       setQueue(data);
   //       setIsNamedEdit(null);
@@ -444,6 +444,20 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
                         </CustomToolTip>
                     </Typography>
                     </div>
+                    <div className="col">
+                    <Typography variant="subtitle1">
+                      Api
+                      <CustomToolTip
+                          title="Adicione sua API"
+                          content="Adicione o URL da sua API."
+                        >
+                          <HelpOutlineOutlinedIcon
+                            style={{ marginLeft: "14px" }}
+                            fontSize="small"
+                          />
+                        </CustomToolTip>
+                    </Typography>
+                    </div>
                 </div>
                 <div className="row mb-3 mt-1">
                   <div className="col">
@@ -456,7 +470,18 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
                         margin="dense"
                         className={classes.textField}
                       />
-                      </div>
+                    </div>
+                    <div className="col">
+                      <Field
+                        as={TextField}
+                        label="Api"
+                        name="api"
+                        id="api"
+                        variant="outlined"
+                        margin="dense"
+                        className={classes.textField}
+                      />
+                    </div>
                 </div>
 
 
@@ -528,7 +553,7 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
                                       name={`chatbots[${index}].name`}
                                     >  
                                       {queues.map((fila) => {  
-                                        console.log(queues)
+                                        //console.log(queues)
                                         return (                                  
                                           <MenuItem key={fila.id} value={fila.id}>{fila.name}</MenuItem>
                                         )

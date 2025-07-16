@@ -47,7 +47,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
 export const file = async (req: Request, res: Response): Promise<Response> => {
   const file = req.files as Express.Multer.File[];
-  console.log(file);
+
 
   return res.json({file});
 };

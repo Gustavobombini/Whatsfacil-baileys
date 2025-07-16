@@ -32,7 +32,7 @@ const wbotMonitor = async (
 
       if (content.tag === "offer") {
         const { from, id } = node.attrs;
-        console.log(`${from} is calling you with id ${id}`);
+        //console.log(`${from} is calling you with id ${id}`);
       }
 
       if (content.tag === "terminate") {
@@ -88,7 +88,7 @@ const wbotMonitor = async (
     });
 
     wbot.ev.on("contacts.upsert", async (contacts: BContact[]) => {
-      console.log("upsert", contacts);
+      //console.log("upsert", contacts);
       await createOrUpdateBaileysService({
         whatsappId: whatsapp.id,
         contacts

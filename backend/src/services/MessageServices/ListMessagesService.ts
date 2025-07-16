@@ -29,7 +29,7 @@ const ListMessagesService = async ({
     throw new AppError("ERR_NO_TICKET_FOUND", 404);
   }
 
-  console.log(seeAllMsg);
+  //console.log(seeAllMsg);
   
 
   const limit = 100;

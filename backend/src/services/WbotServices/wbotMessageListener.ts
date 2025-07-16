@@ -39,6 +39,8 @@ import hourExpedient from "./hourExpedient";
 import { log } from "console";
 import iniciarChat  from "../../services/Dialogflow/DialogflowClient";
 import iniciarAPI from "../../services/ApiService/Api"
+import { normalizeJid } from "../../utils/normalizeJid";
+import { jidDecode } from "@whiskeysockets/baileys";
 
 type Session = WASocket & {
   id?: number;
@@ -246,17 +248,15 @@ const getSenderMessage = (
 };
 
 const getContactMessage = async (msg: proto.IWebMessageInfo, wbot: Session) => {
-  const isGroup = msg.key.remoteJid.includes("g.us");
-  const rawNumber = msg.key.remoteJid.replace(/\D/g, "");
+  const decoded = jidDecode(msg.key.remoteJid || "") || {};
+  const rawNumber = (decoded as { user?: string })?.user || msg.key.remoteJid.replace(/\D/g, "");
+  const remote = `${rawNumber}@s.whatsapp.net`;
+  const isGroup = remote.endsWith("@g.us");
+
+
   return isGroup
-    ? {
-        id: getSenderMessage(msg, wbot),
-        name: msg.pushName
-      }
-    : {
-        id: msg.key.remoteJid,
-        name: msg.key.fromMe ? rawNumber : msg.pushName
-      };
+    ? { id: normalizeJid(getSenderMessage(msg, wbot)), name: msg.pushName }
+    : { id: remote, name: msg.key.fromMe ? rawNumber : msg.pushName };
 };
 
 const downloadMedia = async (msg: proto.IWebMessageInfo) => {
@@ -451,7 +451,7 @@ export const verifyMessage = async (
   const body = getBodyMessage(msg);
 
   const messageData = {
-    id: msg.key.id,
+    id:  (msg.key.id || (msg.key as any).lid),
     ticketId: ticket.id,
     contactId: msg.key.fromMe ? undefined : contact.id,
     body,
@@ -460,9 +460,10 @@ export const verifyMessage = async (
     read: msg.key.fromMe,
     quotedMsgId: quotedMsg?.id,
     ack: msg.status,
-    remoteJid: msg.key.remoteJid,
-    participant: msg.key.participant,
+    remoteJid: normalizeJid(msg.key.remoteJid),
+    participant: msg.key.participant ? normalizeJid(msg.key.participant) : null,
     dataJson: JSON.stringify(msg)
+    
   };
 
   await ticket.update({
@@ -566,13 +567,12 @@ const verifyQueue = async (
           contact
         );
 
-        if(choosenQueue.greetingMessage){
-          const sentMessage = await wbot.sendMessage(
-            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
-            {
-              text: body
-            }
-          );
+        if (choosenQueue.greetingMessage) {
+          const jid = jidNormalizedUser(jidNormalizedUser(`${contact.number}@s.whatsapp.net`));
+
+          const sentMessage = await wbot.sendMessage(jid, {
+            text: body
+          });
         }
               
         await iniciarChat(ticket, choosenQueue.id);
@@ -585,7 +585,7 @@ const verifyQueue = async (
 
         if(body){
           const sentMessage = await wbot.sendMessage(
-            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+            jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
             {
               text: body
             }
@@ -607,7 +607,7 @@ const verifyQueue = async (
   
   
           const sentMessage = await wbot.sendMessage(
-            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+            jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
             {
               text: body
             }
@@ -622,7 +622,7 @@ const verifyQueue = async (
             contact
           );
           const sentMessage = await wbot.sendMessage(
-            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+            jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
             {
               text: body
             }
@@ -647,7 +647,7 @@ const verifyQueue = async (
       const debouncedSentMessage = debounce(
         async () => {
           const sentMessage = await wbot.sendMessage(
-            `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+            jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
             {
               text: body
             }
@@ -687,7 +687,7 @@ const verifyQueue = async (
         };
 
         const sendMsg = await wbot.sendMessage(
-          `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+          jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
           buttonMessage
         );
 
@@ -700,7 +700,7 @@ const verifyQueue = async (
           contact
         );
         const sentMessage = await wbot.sendMessage(
-          `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+          jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
           {
             text: body
           }
@@ -725,7 +725,7 @@ const verifyQueue = async (
       };
 
       const sendMsg = await wbot.sendMessage(
-        `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+        jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
         buttonMessage
       );
 
@@ -763,7 +763,7 @@ const verifyQueue = async (
         };
 
         const sendMsg = await wbot.sendMessage(
-          `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+          jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
           listMessage
         );
 
@@ -777,7 +777,7 @@ const verifyQueue = async (
         );
 
         const sentMessage = await wbot.sendMessage(
-          `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+          jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
           {
             text: body
           }
@@ -809,7 +809,7 @@ const verifyQueue = async (
       };
 
       const sendMsg = await wbot.sendMessage(
-        `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+        jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
         listMessage
       );
 
@@ -965,7 +965,7 @@ const handleMessage = async (
 
       const body = formatBody(`\u200e${whatsapp.outOfWorkMessage}`, contact);
       const sentMessage = await wbot.sendMessage(
-        `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+        jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
         {
           text: body
         }
@@ -1019,7 +1019,7 @@ const filterMessages = (msg: WAMessage): boolean => {
       WAMessageStubType.E2E_DEVICE_CHANGED,
       WAMessageStubType.E2E_IDENTITY_CHANGED,
       WAMessageStubType.CIPHERTEXT
-    ].includes(msg.messageStubType as WAMessageStubType)
+    ].includes(msg.messageStubType as typeof WAMessageStubType[keyof typeof WAMessageStubType])
   )
     return false;
 

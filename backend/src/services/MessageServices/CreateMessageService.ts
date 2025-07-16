@@ -1,3 +1,4 @@
+import { log } from "console";
 import { getIO } from "../../libs/socket";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
@@ -21,6 +22,8 @@ interface Request {
 const CreateMessageService = async ({
   messageData
 }: Request): Promise<Message> => {
+  log("Creating message with data:", messageData);
+
   await Message.upsert(messageData);
 
   const message = await Message.findByPk(messageData.id, {

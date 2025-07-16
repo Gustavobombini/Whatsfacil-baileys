@@ -16,6 +16,7 @@ import { logger } from "../../utils/logger";
 import createOrUpdateBaileysService from "../BaileysServices/CreateOrUpdateBaileysService";
 import CreateMessageService from "../MessageServices/CreateMessageService";
 import { log } from "console";
+import { normalizeJid } from "../../utils/normalizeJid";
 
 type Session = WASocket & {
   id?: number;
@@ -46,10 +47,10 @@ const wbotMonitor = async (
           });
 
           const number = node.attrs.from.replace(/:.*/, "")
+          
+          const normalizedNumber = normalizeJid(number);
 
-          const contact = await Contact.findOne({
-            where: { number }
-          });
+          const contact = await Contact.findOne({ where: { number: normalizedNumber  } });
 
 
           const ticket = await Ticket.findOne({

@@ -11,7 +11,7 @@ module.exports = {
   },
 
   down: async (queryInterface: QueryInterface) => {
-    await queryInterface.removeColumn("queues", "typebot");
+    await queryInterface.removeColumn("Queues", "typebot");
 
   }
 };

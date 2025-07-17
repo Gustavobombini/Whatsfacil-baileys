@@ -48,6 +48,9 @@ class Contact extends Model<Contact> {
   @CreatedAt
   createdAt: Date;
 
+  @Column
+  remote: string;
+
   @UpdatedAt
   updatedAt: Date;
 

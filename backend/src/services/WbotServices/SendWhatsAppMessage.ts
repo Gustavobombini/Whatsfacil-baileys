@@ -19,9 +19,12 @@ const SendWhatsAppMessage = async ({
 }: Request): Promise<WAMessage> => {
   let options = {};
   const wbot = await GetTicketWbot(ticket);
+
   const number = `${ticket.contact.number}@${
     ticket.isGroup ? "g.us" : "s.whatsapp.net"
   }`;
+
+
   if (quotedMsg) {
     const chatMessages = await Message.findOne({
       where: {
@@ -42,8 +45,10 @@ const SendWhatsAppMessage = async ({
   }
 
   try {
+    console.log(`Enviando mensagem para ${ticket.contact.remote}`);
+    
     const sentMessage = await wbot.sendMessage(
-      number,
+      ticket.contact.remote,
       {
         text: formatBody(body, ticket.contact)
       },

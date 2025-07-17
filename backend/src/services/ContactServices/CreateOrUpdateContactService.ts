@@ -1,3 +1,4 @@
+import { log } from "console";
 import { getIO } from "../../libs/socket";
 import Contact from "../../models/Contact";
 
@@ -13,6 +14,7 @@ interface Request {
   email?: string;
   profilePicUrl?: string;
   extraInfo?: ExtraInfo[];
+  remote?: string;
 }
 
 const CreateOrUpdateContactService = async ({
@@ -21,8 +23,11 @@ const CreateOrUpdateContactService = async ({
   profilePicUrl,
   isGroup,
   email = "",
-  extraInfo = []
+  extraInfo = [],
+  remote
 }: Request): Promise<Contact> => {
+
+
   const number = isGroup ? rawNumber : rawNumber.replace(/[^0-9]/g, "");
 
   const io = getIO();
@@ -32,7 +37,7 @@ const CreateOrUpdateContactService = async ({
 
   if (contact) {
     try {
-      await contact.update({ profilePicUrl });
+      await contact.update({ profilePicUrl, remote });
 
       io.emit("contact", {
         action: "update",
@@ -51,7 +56,8 @@ const CreateOrUpdateContactService = async ({
         profilePicUrl,
         email,
         isGroup,
-        extraInfo
+        extraInfo,
+        remote
       });
 
       io.emit("contact", {

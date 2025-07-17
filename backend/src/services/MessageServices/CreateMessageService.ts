@@ -22,7 +22,7 @@ interface Request {
 const CreateMessageService = async ({
   messageData
 }: Request): Promise<Message> => {
-  log("Creating message with data:", messageData);
+  //log("Creating message with data:", messageData);
 
   await Message.upsert(messageData);
 

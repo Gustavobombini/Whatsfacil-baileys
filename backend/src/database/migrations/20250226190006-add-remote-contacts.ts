@@ -3,7 +3,7 @@ import { QueryInterface, DataTypes } from "sequelize";
 
 module.exports = {
   up: async (queryInterface: QueryInterface) => {
-    await queryInterface.addColumn("Queues", "api", {
+    await queryInterface.addColumn("Contacts", "remote", {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: ''
@@ -11,7 +11,7 @@ module.exports = {
   },
 
   down: async (queryInterface: QueryInterface) => {
-    await queryInterface.removeColumn("Queues", "api");
+    await queryInterface.removeColumn("Contacts", "remote");
 
   }
 };

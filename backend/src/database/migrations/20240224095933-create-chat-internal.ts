@@ -2,7 +2,7 @@ import { QueryInterface, DataTypes } from "sequelize";
 
 module.exports = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable("chatinternal", {
+    return queryInterface.createTable("ChatInternal", {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,

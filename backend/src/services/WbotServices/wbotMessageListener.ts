@@ -55,6 +55,7 @@ interface ImessageUpsert {
 interface IMe {
   name: string;
   id: string;
+  remote?: string;
 }
 
 const writeFileAsync = promisify(writeFile);
@@ -255,8 +256,8 @@ const getContactMessage = async (msg: proto.IWebMessageInfo, wbot: Session) => {
 
 
   return isGroup
-    ? { id: normalizeJid(getSenderMessage(msg, wbot)), name: msg.pushName }
-    : { id: remote, name: msg.key.fromMe ? rawNumber : msg.pushName };
+    ? { id: normalizeJid(getSenderMessage(msg, wbot)), name: msg.pushName, remote: msg.key.remoteJid }
+    : { id: remote, name: msg.key.fromMe ? rawNumber : msg.pushName, remote: msg.key.remoteJid };
 };
 
 const downloadMedia = async (msg: proto.IWebMessageInfo) => {
@@ -355,6 +356,7 @@ const verifyContact = async (
   const contactData = {
     name: msgContact?.name || msgContact.id.replace(/\D/g, ""),
     number: msgContact.id.replace(/\D/g, ""),
+    remote: msgContact.remote ,
     profilePicUrl,
     isGroup: msgContact.id.includes("g.us")
   };
@@ -568,9 +570,11 @@ const verifyQueue = async (
         );
 
         if (choosenQueue.greetingMessage) {
-          const jid = jidNormalizedUser(jidNormalizedUser(`${contact.number}@s.whatsapp.net`));
+          const jid = jidNormalizedUser(contact.remote);
 
-          const sentMessage = await wbot.sendMessage(jid, {
+          logger.info(`Enviando mensagem para ${contact.remote}`);
+
+          const sentMessage = await wbot.sendMessage(contact.remote, {
             text: body
           });
         }
@@ -585,7 +589,7 @@ const verifyQueue = async (
 
         if(body){
           const sentMessage = await wbot.sendMessage(
-            jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+            contact.remote,
             {
               text: body
             }
@@ -607,7 +611,7 @@ const verifyQueue = async (
   
   
           const sentMessage = await wbot.sendMessage(
-            jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+            contact.remote,
             {
               text: body
             }
@@ -622,7 +626,7 @@ const verifyQueue = async (
             contact
           );
           const sentMessage = await wbot.sendMessage(
-            jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+            contact.remote,
             {
               text: body
             }
@@ -647,7 +651,7 @@ const verifyQueue = async (
       const debouncedSentMessage = debounce(
         async () => {
           const sentMessage = await wbot.sendMessage(
-            jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+            contact.remote,
             {
               text: body
             }
@@ -687,7 +691,7 @@ const verifyQueue = async (
         };
 
         const sendMsg = await wbot.sendMessage(
-          jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+          contact.remote,
           buttonMessage
         );
 
@@ -700,7 +704,7 @@ const verifyQueue = async (
           contact
         );
         const sentMessage = await wbot.sendMessage(
-          jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+          contact.remote,
           {
             text: body
           }
@@ -725,7 +729,7 @@ const verifyQueue = async (
       };
 
       const sendMsg = await wbot.sendMessage(
-        jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+        contact.remote,
         buttonMessage
       );
 
@@ -763,7 +767,7 @@ const verifyQueue = async (
         };
 
         const sendMsg = await wbot.sendMessage(
-          jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+          contact.remote,
           listMessage
         );
 
@@ -777,7 +781,7 @@ const verifyQueue = async (
         );
 
         const sentMessage = await wbot.sendMessage(
-          jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+          contact.remote,
           {
             text: body
           }
@@ -809,7 +813,7 @@ const verifyQueue = async (
       };
 
       const sendMsg = await wbot.sendMessage(
-        jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+        contact.remote,
         listMessage
       );
 
@@ -965,7 +969,7 @@ const handleMessage = async (
 
       const body = formatBody(`\u200e${whatsapp.outOfWorkMessage}`, contact);
       const sentMessage = await wbot.sendMessage(
-        jidNormalizedUser(`${contact.number}@s.whatsapp.net`),
+        contact.remote,
         {
           text: body
         }

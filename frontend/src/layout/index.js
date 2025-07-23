@@ -113,25 +113,30 @@ const LoggedInLayout = ({ children }) => {
   const [drawerVariant, setDrawerVariant] = useState("permanent");
   const { user } = useContext(AuthContext);
   const socket = openSocket();
+  console.log(user.groups);
 
   useEffect(() => {
     const handleReceiveMessage = (data) => {
       const urlAtual = window.location.href;
       const URL = urlAtual.split('/');
       const idUrl = URL[URL.length - 1];
+      const userGroupIds = user.groups.map(g => g.id);
 
       Notification.requestPermission().then(function (permission) {})
+
       
-      if(data.receiving_user === user.id &&  idUrl != data.sent_user){
+
+      if((data.receiving_user === user.id &&  idUrl != data.sent_user) || (data?.receiving_group && data?.sent_user != user.id &&
+    userGroupIds.includes(data.receiving_group) )){
           if(data.type_message === 'file'){
-            toast.success(`${data.sent_name}: Enviou um Anexo`);
-            new Notification(data.sent_name , {
-              body: `${data.sent_name}: Enviou um Anexo`
+            toast.success(`${data.name}: Enviou um Anexo`);
+            new Notification(data.name , {
+              body: `${data.name}: Enviou um Anexo`
             });
           }else{
-            toast.success(`${data.sent_name}: ${data.message}`);
-            new Notification(data.sent_name , {
-              body: `${data.sent_name}: ${data.message}`
+            toast.success(`${data.name}: ${data.message}`);
+            new Notification(data.name , {
+              body: `${data.name}: ${data.message}`
             });
           }
       }

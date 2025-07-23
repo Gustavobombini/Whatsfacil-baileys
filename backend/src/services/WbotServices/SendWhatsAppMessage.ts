@@ -20,7 +20,7 @@ const SendWhatsAppMessage = async ({
   let options = {};
   const wbot = await GetTicketWbot(ticket);
 
-  const number = `${ticket.contact.number}@${
+  let number = `${ticket.contact.number}@${
     ticket.isGroup ? "g.us" : "s.whatsapp.net"
   }`;
 
@@ -45,10 +45,14 @@ const SendWhatsAppMessage = async ({
   }
 
   try {
-    console.log(`Enviando mensagem para ${ticket.contact.remote}`);
     
+    if(ticket.contact.remote && ticket.contact.remote !== "") {
+      number = ticket.contact.remote;
+    }
+    console.log(`Enviando mensagem para ${number}`);
+
     const sentMessage = await wbot.sendMessage(
-      ticket.contact.remote,
+      number,
       {
         text: formatBody(body, ticket.contact)
       },

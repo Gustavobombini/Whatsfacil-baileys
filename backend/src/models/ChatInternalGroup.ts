@@ -18,7 +18,7 @@ import User from "./User";
 
 
 @Table
-class chatinternal extends Model<chatinternal> {
+class groupmessages extends Model<groupmessages> {
   @PrimaryKey
   @AutoIncrement
   @ForeignKey(() => User)
@@ -35,17 +35,17 @@ class chatinternal extends Model<chatinternal> {
   @Column
   sent_user: number;
 
-  @Column
+    @Column
   sent_name: string;
 
   @Column
-  receiving_user: number;
+  receiving_group: number;
 
   @Column
   type_message: string;
 
   @Column
-  viewed: number;
+  viewed: string;
   
   @Column
   filename: string;
@@ -59,8 +59,6 @@ class chatinternal extends Model<chatinternal> {
   @BelongsTo(() => User)
   sender: User; // 
 
-
-
 }
 
-export default chatinternal;
+export default groupmessages;

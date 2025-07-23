@@ -16,5 +16,8 @@ chatRoutes.get("/ChatInternal",  chatInternalRoutes.index);
 
 chatRoutes.get("/ChatInternal-unviewd",  chatInternalRoutes.unViewd);
 
+chatRoutes.get("/ChatInternal-group",  chatInternalRoutes.groupChat);
+
+chatRoutes.post("/ChatInternal-group",  chatInternalRoutes.groupChatStore);
 
 export default chatRoutes;

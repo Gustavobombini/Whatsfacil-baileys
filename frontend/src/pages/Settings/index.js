@@ -14,6 +14,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import api from "../../services/api.js";
 import { i18n } from "../../translate/i18n.js";
 import toastError from "../../errors/toastError.js";
+import { Button } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -43,12 +44,14 @@ const Settings = () => {
 	const classes = useStyles();
 
 	const [settings, setSettings] = useState([]);
+	 const [groups, setGroups] = useState([]);
 
 	useEffect(() => {
 		const fetchSession = async () => {
 			try {
-				const { data } = await api.get("/settings");
-				setSettings(data);
+				const { data } = await api.get("/settings");				
+				setSettings(data.settings);
+				setGroups(data.groups);
 			} catch (err) {
 				toastError(err);
 			}
@@ -88,6 +91,46 @@ const Settings = () => {
 			toastError(err);
 		}
 	};
+
+	const createnewGroup = async () => {
+		try {
+			const name = prompt("Digite o nome do novo grupo:");
+			if (!name) {
+				return;
+			}
+			const { data } = await api.post("/settings/groups", {
+				name: name,
+			});
+			setGroups(prevState => [...prevState, data]);
+			toast.success(i18n.t("settings.success"));
+		} catch (err) {
+			toastError(err);
+		}
+	};
+
+		const handleDeleteGroup = async (e) => {
+			try {
+				const selectedGroupId = e.target.value;
+
+				if (selectedGroupId === "enabled") {
+					return;
+				}
+
+				if (!window.confirm("Tem certeza que deseja excluir este grupo?")) {
+					return;
+				}
+
+				await api.delete(`/settings/groups/${selectedGroupId}`);
+
+				setGroups(prevState =>
+					prevState.filter(group => group.id.toString() !== selectedGroupId)
+				);
+
+				toast.success(i18n.t("settings.success"));
+			} catch (err) {
+				toastError(err);
+			}
+		};
 
 	const getSettingValue = key => {
 		const { value } = settings.find(s => s.key === key);
@@ -190,6 +233,40 @@ const Settings = () => {
 						fullWidth
 						value={settings && settings.length > 0 && getSettingValue("userApiToken")}
 					/>
+				</Paper>
+				<Paper className={classes.paper}>
+					<Typography variant="body1">
+						Grupos Chat Interno
+					</Typography>
+					<Select
+						margin="dense"
+						variant="outlined"
+						native
+						className={classes.settingOption}
+						onChange={handleDeleteGroup}
+						id="groupchatinternal-setting"
+						name="groupchatinternal"
+					>
+						<option value="enabled">
+							Selecione para Excluir
+						</option>
+						{groups && groups.length > 0  ? (
+							groups.map(group => (
+								<option key={group.id} value={group.id}>
+									{group.name}
+								</option>
+							))
+						) : ''}
+					</Select>
+					<Button
+						style={{ margin: 10, height: 44, marginBottom: 14 }}
+						variant="outlined"
+						color="primary"
+						onClick={createnewGroup}
+					>
+						Novo Grupo
+					</Button>
+					
 				</Paper>
 
         {/* <Paper className={classes.paper}>

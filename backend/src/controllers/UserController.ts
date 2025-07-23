@@ -9,6 +9,7 @@ import ListUsersService from "../services/UserServices/ListUsersService";
 import UpdateUserService from "../services/UserServices/UpdateUserService";
 import ShowUserService from "../services/UserServices/ShowUserService";
 import DeleteUserService from "../services/UserServices/DeleteUserService";
+import groupchatinternal from "../models/Groups";
 
 type IndexQuery = {
   searchParam: string;
@@ -34,7 +35,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     throw new AppError("Você não pode criar novos usuarios!", 403);
   }
 
-  const { email, password, name, profile, queueIds, whatsappId, queuesNull, access, seeAllMsg } = req.body;
+  const { email, password, name, profile, queueIds, whatsappId, queuesNull, access, seeAllMsg, groupIds } = req.body;
 
   if (
     req.url === "/signup" &&
@@ -54,7 +55,8 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     whatsappId,
     queuesNull,
     access,
-    seeAllMsg
+    seeAllMsg,
+    groupIds
   });
 
   const io = getIO();
@@ -115,4 +117,9 @@ export const remove = async (
   });
 
   return res.status(200).json({ message: "User deleted" });
+};
+
+export const listGroups = async (req: Request, res: Response): Promise<Response> => {
+  const groups = await groupchatinternal.findAll();
+  return res.status(200).json(groups);
 };

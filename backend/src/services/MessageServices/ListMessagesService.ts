@@ -1,14 +1,11 @@
-import { boolean } from "yup";
 import AppError from "../../errors/AppError";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
-import Whatsapp from "../../models/Whatsapp";
 import ShowTicketService from "../TicketServices/ShowTicketService";
 
 interface Request {
   ticketId: string;
   pageNumber?: string;
-  seeAllMsg: any
 }
 
 interface Response {
@@ -21,7 +18,6 @@ interface Response {
 const ListMessagesService = async ({
   pageNumber = "1",
   ticketId,
-  seeAllMsg
 }: Request): Promise<Response> => {
   const ticket = await ShowTicketService(ticketId);
 
@@ -29,24 +25,8 @@ const ListMessagesService = async ({
     throw new AppError("ERR_NO_TICKET_FOUND", 404);
   }
 
-  //console.log(seeAllMsg);
-  
-
-  const limit = 100;
+  const limit = 20;
   const offset = limit * (+pageNumber - 1);
-  
-  const viewOthers = process.env.VIEW_MSG_OTHERS_NUMBER;
-  const viewOthersQueue = process.env.VIEW_MSG_OTHERS_QUEUE;
-  const viewOthersClosed = process.env.VIEW_MSG_OTHERS_NUMBER_CLOSED;
-
-  let viewClosed = false; 
- 
-  if(ticket.status == 'closed'){
-    if(viewOthersClosed == '2'){
-      viewClosed = true;
-    }
-  }
-
 
     const { count, rows: messages } = await Message.findAndCountAll({
         limit,
@@ -59,14 +39,9 @@ const ListMessagesService = async ({
             },
             {
                 model: Ticket,
-                where: { 
-                  ...(seeAllMsg == 2 ? { id : ticket.id } : { contactId: ticket.contactId }),
-                  ...(viewClosed && { whatsappId: ticket.whatsappId }),
-                  ...((viewOthers === '2' && ticket.status !== 'closed') && { whatsappId: ticket.whatsappId }),
-                  ...(viewOthersQueue === '2' && { queueId: ticket.queueId })
-                },
+                where: { contactId: ticket.contactId },
                 required: true
-            },
+            }
         ],
         offset,
         order: [["createdAt", "DESC"]]

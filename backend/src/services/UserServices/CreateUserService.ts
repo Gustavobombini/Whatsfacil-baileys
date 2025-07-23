@@ -9,6 +9,7 @@ interface Request {
   password: string;
   name: string;
   queueIds?: number[];
+  groupIds?: number[];
   profile?: string;
   whatsappId?: number;
   queuesNull?: boolean;
@@ -32,7 +33,8 @@ const CreateUserService = async ({
   whatsappId,
   queuesNull,
   access,
-  seeAllMsg
+  seeAllMsg,
+  groupIds
 }: Request): Promise<Response> => {
   const schema = Yup.object().shape({
     name: Yup.string().required().min(2),
@@ -70,10 +72,12 @@ const CreateUserService = async ({
       access,
       seeAllMsg
     },
-    { include: ["queues", "whatsapp"] }
+    { include: ["queues", "whatsapp", "groups"] }
   );
 
   await user.$set("queues", queueIds);
+
+  await user.$set("groups", groupIds);
 
   await user.reload();
 

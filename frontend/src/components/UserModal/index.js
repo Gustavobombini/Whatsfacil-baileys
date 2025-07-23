@@ -30,6 +30,7 @@ import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import QueueSelect from "../QueueSelect";
+import GroupsSelect from "../GroupsSelect";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { Can } from "../Can";
 import useWhatsApps from "../../hooks/useWhatsApps";
@@ -86,12 +87,14 @@ const UserModal = ({ open, onClose, userId }) => {
 		queuesNull: false,
 		access: '',
 		seeAllMsg: 1
+
 	};
 
 	const { user: loggedInUser } = useContext(AuthContext);
 
 	const [user, setUser] = useState(initialState);
 	const [selectedQueueIds, setSelectedQueueIds] = useState([]);
+	const [selectedGroupIds, setSelectedGroupIds] = useState([]);
 	const [selectedAccess, setSelectedAccess] = useState();
 	const [showPassword, setShowPassword] = useState(false);
 	const [whatsappId, setWhatsappId] = useState(false);
@@ -109,6 +112,8 @@ const UserModal = ({ open, onClose, userId }) => {
 					return { ...prevState, ...data };
 				});
 				const userQueueIds = data.queues?.map(queue => queue.id);
+				const userGroupIds = data.groups?.map(group => group.id);
+				setSelectedGroupIds(userGroupIds);
 				setSelectedQueueIds(userQueueIds);
 				setSelectedAccess(data.access)
 				//console.log(data);
@@ -127,9 +132,9 @@ const UserModal = ({ open, onClose, userId }) => {
 	};
 
 	const handleSaveUser = async values => {
-				
-		
-		const userData = { ...values, whatsappId, queueIds: selectedQueueIds, access : selectedAccess };
+
+
+		const userData = { ...values, whatsappId, queueIds: selectedQueueIds, access : selectedAccess, groupIds: selectedGroupIds };
 		try {
 			if (userId) {
 				await api.put(`/users/${userId}`, userData);
@@ -349,6 +354,17 @@ const UserModal = ({ open, onClose, userId }) => {
 										<QueueSelect
 											selectedQueueIds={selectedQueueIds}
 											onChange={values => setSelectedQueueIds(values)}
+										/>
+									)}
+								/>
+
+								<Can
+									role={loggedInUser.profile}
+									perform="user-modal:editQueues"
+									yes={() => (
+										<GroupsSelect
+											selectedGroupIds={selectedGroupIds}
+											onChange={values => setSelectedGroupIds(values)}
 										/>
 									)}
 								/>

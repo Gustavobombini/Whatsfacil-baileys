@@ -21,6 +21,8 @@ import Queue from "./Queue";
 import UserQueue from "./UserQueue";
 import Whatsapp from "./Whatsapp";
 import chatinternal from "./ChatInternal";
+import groupchatinternal from "./Groups";
+import UserGroups from "./UserGroups";
 
 @Table
 class User extends Model<User> {
@@ -79,6 +81,10 @@ class User extends Model<User> {
 
   @BelongsToMany(() => Queue, () => UserQueue)
   queues: Queue[];
+
+
+  @BelongsToMany(() => groupchatinternal, () => UserGroups)
+  groups: groupchatinternal[];
 
   @BeforeUpdate
   @BeforeCreate

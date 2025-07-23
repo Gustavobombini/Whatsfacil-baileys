@@ -70,17 +70,31 @@ const MainListItems = (props) => {
     return () => clearTimeout(delayDebounceFn);
   }, [whatsApps]);
 
-  setInterval(() => {
-    const fetchUnreadMsg = async () => {
-      const loadContact = await api.get("/ChatInternal-unviewd", {
-        params: { receiving_user: user.id, type: 2 } 
-      });
-      setchat(loadContact.data.data.length)
-      //console.log(loadContact.data.data.length);
-    }
-    fetchUnreadMsg()
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const fetchUnreadMsg = async () => {
+        try {
+          const { data } = await api.get("/ChatInternal-unviewd", {
+            params: { receiving_user: user.id, type: 2 },
+          });
 
-  }, 60000)
+          
+
+          const count =
+            data.data?.length || data.results?.length || 0;
+
+          setchat(count);
+        } catch (err) {
+          console.error("Erro ao buscar mensagens:", err);
+        }
+      };
+
+      fetchUnreadMsg();
+    }, 60000);
+
+    // Limpar ao desmontar
+    return () => clearInterval(interval);
+  }, [user.id]);
 
   if(user.profile === "custom"){
     //console.log(user);

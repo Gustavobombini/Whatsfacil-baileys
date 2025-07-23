@@ -12,4 +12,8 @@ settingRoutes.get("/settings", isAuth, SettingController.index);
 // change setting key to key in future
 settingRoutes.put("/settings/:settingKey", isAuth, SettingController.update);
 
+settingRoutes.post("/settings/groups", isAuth, SettingController.createGroup);
+
+settingRoutes.delete("/settings/groups/:groupId", isAuth, SettingController.deleteGroup);
+
 export default settingRoutes;

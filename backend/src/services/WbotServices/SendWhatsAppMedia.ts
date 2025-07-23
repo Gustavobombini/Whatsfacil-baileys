@@ -114,8 +114,16 @@ const SendWhatsAppMedia = async ({
       };
     }
 
+    let number = `${ticket.contact.number}@${
+      ticket.isGroup ? "g.us" : "s.whatsapp.net"
+    }`;
+
+    if (ticket.contact.remote && ticket.contact.remote !== "") {
+      number = ticket.contact.remote;
+    }
+
     const sentMessage = await wbot.sendMessage(
-      `${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+      number,
       {
         ...options
       }

@@ -15,4 +15,6 @@ userRoutes.get("/users/:userId", isAuth, UserController.show);
 
 userRoutes.delete("/users/:userId", isAuth, UserController.remove);
 
+userRoutes.get("/users-groups", isAuth, UserController.listGroups);
+
 export default userRoutes;

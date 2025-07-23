@@ -22,6 +22,10 @@ import UserQueue from "../models/UserQueue";
 import Whatsapp from "../models/Whatsapp";
 import WhatsappQueue from "../models/WhatsappQueue";
 import chatinternal from "../models/ChatInternal";
+import groupchatinternal from "../models/Groups";
+import groupmessages from "../models/ChatInternalGroup";
+import groupviewed from "../models/GroupsViewed";
+import UserGroups from "../models/UserGroups";
 // eslint-disable-next-line
 const dbConfig = require("../config/database");
 
@@ -49,7 +53,11 @@ const models = [
   SettingMessage,
   MassMessages,
   BaileysSessions,
-  chatinternal
+  chatinternal,
+  groupchatinternal,
+  groupmessages,
+  groupviewed,
+  UserGroups
 ];
 
 sequelize.addModels(models);

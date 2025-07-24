@@ -18,7 +18,7 @@ import User from "./User";
 
 
 @Table
-class groupmessages extends Model<groupmessages> {
+class GroupMessages extends Model<GroupMessages> {
   @PrimaryKey
   @AutoIncrement
   @ForeignKey(() => User)
@@ -61,4 +61,4 @@ class groupmessages extends Model<groupmessages> {
 
 }
 
-export default groupmessages;
+export default GroupMessages;

@@ -8,7 +8,6 @@ import Tickets from "../pages/Tickets/";
 import Signup from "../pages/Signup/";
 import Login from "../pages/Login/";
 import Connections from "../pages/Connections/";
-import Settings from "../pages/settings";
 import Users from "../pages/Users";
 import Contacts from "../pages/Contacts/";
 import QuickAnswers from "../pages/QuickAnswers/";
@@ -21,6 +20,7 @@ import { WhatsAppsProvider } from "../context/WhatsApp/WhatsAppsContext";
 import Route from "./Route";
 import SendMassMessage from "../pages/SendMassMessage";
 import Schedules from "../pages/Schedules";
+import Settings from "../pages/Settings";
 
 
 const Routes = () => {

@@ -60,7 +60,7 @@ const InternalChat = () => {
 
   useEffect(() => {
     const handleReceiveMessage = (data) => {
-      if((data?.receiving_user === user.id && data?.sent_user === selectedContact?.id) || (data?.receiving_group === selectedGroup?.id)){
+      if((data?.receiving_user === user.id && data?.sent_user === selectedContact?.id) || (data?.receiving_group != null && data?.receiving_group === selectedGroup?.id)){
         setMsg((msgList) => [...msgList, data])
       }
     };

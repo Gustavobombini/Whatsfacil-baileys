@@ -6,7 +6,7 @@ import AppError from "../errors/AppError";
 import sequelize from "../database";
 import User from "../models/User";
 import groupchatinternal from "../models/Groups";
-import groupmessages from "../models/ChatInternalGroup";
+import GroupMessages from "../models/ChatInternalGroup";
 import GroupsViewed from "../models/GroupsViewed";
 
 ''
@@ -84,7 +84,7 @@ export const unViewd = async (req: Request, res: Response): Promise<Response> =>
 
     // Buscar grupos com indicador de mensagens não lidas
     const rawGroups = await sequelize.query(
-      'SELECT groupId FROM usergroups WHERE userId = :userId',
+      'SELECT "groupId" FROM "UserGroups" WHERE "userId" = :userId',
       {
         replacements: { userId: receiving_user },
         type: QueryTypes.SELECT
@@ -104,24 +104,25 @@ export const unViewd = async (req: Request, res: Response): Promise<Response> =>
         'name',
         [
           Sequelize.literal(`(
-            SELECT CASE 
-              WHEN EXISTS (
-                SELECT 1 
-                FROM groupmessages gm
-                INNER JOIN (
-                  SELECT receiving_group, MAX(createdAt) AS last_message
-                  FROM groupmessages
-                  GROUP BY receiving_group
-                ) AS last_gm
-                  ON gm.receiving_group = last_gm.receiving_group
-                  AND gm.createdAt = last_gm.last_message
-                LEFT JOIN GroupViewed gv
-                  ON gv.groupId = gm.receiving_group AND gv.userId = ${receiving_user}
-                WHERE gm.receiving_group = groupchatinternal.id
-                  AND (gv.updatedAt IS NULL OR gm.createdAt > gv.updatedAt)
-              ) THEN 1 
-              ELSE 0 
-            END
+       SELECT CASE 
+        WHEN EXISTS (
+          SELECT 1 
+          FROM "GroupMessages" gm
+          INNER JOIN (
+            SELECT receiving_group, MAX("createdAt") AS last_message
+            FROM "GroupMessages"
+            GROUP BY receiving_group
+          ) AS last_gm
+            ON "gm"."receiving_group" = "last_gm"."receiving_group"
+            AND "gm"."createdAt" = "last_gm"."last_message"
+          LEFT JOIN "GroupViewed" gv
+            ON "gv"."groupId" = "gm"."receiving_group" AND "gv"."userId" = ${receiving_user}
+          WHERE "gm"."receiving_group" = "groupchatinternal"."id"
+            AND ("gv"."updatedAt" IS NULL OR "gm"."createdAt" > "gv"."updatedAt")
+        ) THEN 1 
+        ELSE 0
+      END
+
           )`),
           'hasUnreadMessages'
         ]
@@ -143,20 +144,22 @@ export const unViewd = async (req: Request, res: Response): Promise<Response> =>
       });
 
       const results = await sequelize.query(`
-          SELECT gm.id
-          FROM groupmessages gm
-          INNER JOIN (
-              SELECT receiving_group, MAX(createdAt) AS last_message
-              FROM groupmessages
-              GROUP BY receiving_group
-          ) AS last_gm
-            ON gm.receiving_group = last_gm.receiving_group
-            AND gm.createdAt = last_gm.last_message
-          INNER JOIN usergroups uq
-            ON uq.groupId = gm.receiving_group AND uq.userId = :userId
-          LEFT JOIN GroupViewed gv
-            ON gv.groupId = gm.receiving_group AND gv.userId = :userId
-          WHERE gv.updatedAt IS NULL OR gm.createdAt > gv.updatedAt;
+        SELECT gm.id
+        FROM "GroupMessages" gm
+        INNER JOIN (
+            SELECT receiving_group, MAX("createdAt") AS last_message
+            FROM "GroupMessages"
+            GROUP BY receiving_group
+        ) AS last_gm
+          ON "gm"."receiving_group" = "last_gm"."receiving_group"
+          AND "gm"."createdAt" = "last_gm"."last_message"
+        INNER JOIN "UserGroups" uq
+          ON "uq"."groupId" = "gm"."receiving_group" AND "uq"."userId" = :userId
+        LEFT JOIN "GroupViewed" gv
+          ON "gv"."groupId" = "gm"."receiving_group" AND "gv"."userId" = :userId
+        WHERE "gv"."updatedAt" IS NULL OR "gm"."createdAt" > "gv"."updatedAt";
+
+
           `, {
           replacements: { userId: receiving_user },
           type: QueryTypes.SELECT
@@ -187,7 +190,7 @@ export const groupChat = async (req: Request, res: Response): Promise<Response> 
     }
   );
 
-  const data = await groupmessages.findAll({
+  const data = await GroupMessages.findAll({
     where: {
       receiving_group: receiving_group
     },
@@ -202,7 +205,7 @@ export const groupChatStore = async (req: Request, res: Response): Promise<Respo
   if(!data.receiving_group){
     throw new AppError('Group not found', 404);
   }
-  const create = await groupmessages.create(data);
+  const create = await GroupMessages.create(data);
 
   await GroupsViewed.upsert(
     {

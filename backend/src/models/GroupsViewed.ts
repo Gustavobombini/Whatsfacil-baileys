@@ -1,37 +1,36 @@
 import {
-    Table,
-    Column,
-    CreatedAt,
-    UpdatedAt,
-    Model,
-    PrimaryKey,
-    AutoIncrement,
-  } from "sequelize-typescript";
-  
-  @Table({
-  freezeTableName: true, // Impede a pluralização automática
+  Table,
+  Column,
+  CreatedAt,
+  UpdatedAt,
+  Model,
+  PrimaryKey,
+  AutoIncrement,
+  Unique,
+} from "sequelize-typescript";
+
+@Table({
+  freezeTableName: true,
 })
-  
-  
-  @Table
-  class groupviewed extends Model<groupviewed> {
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    id: number;
-  
-    @Column
-    groupId: number;
+class GroupViewed extends Model<GroupViewed> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id: number;
 
-    @Column
-    userId: number;
+  @Unique("group_user_unique")
+  @Column
+  groupId: number;
 
-    @CreatedAt
-    createdAt: Date;
-  
-    @UpdatedAt
-    updatedAt: Date;
-  
-  }
+  @Unique("group_user_unique")
+  @Column
+  userId: number;
 
-  export default groupviewed;
+  @CreatedAt
+  createdAt: Date;
+
+  @UpdatedAt
+  updatedAt: Date;
+}
+
+export default GroupViewed;

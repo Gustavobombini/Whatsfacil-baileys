@@ -18,7 +18,7 @@ import User from "./User";
 
 
 @Table
-class chatinternal extends Model<chatinternal> {
+class ChatInternal extends Model<ChatInternal> {
   @PrimaryKey
   @AutoIncrement
   @ForeignKey(() => User)
@@ -63,4 +63,4 @@ class chatinternal extends Model<chatinternal> {
 
 }
 
-export default chatinternal;
+export default ChatInternal;

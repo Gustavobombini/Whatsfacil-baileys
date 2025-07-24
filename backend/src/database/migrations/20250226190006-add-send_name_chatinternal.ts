@@ -3,13 +3,13 @@ import { QueryInterface, DataTypes } from "sequelize";
 
 module.exports = {
   up: async (queryInterface: QueryInterface) => {
-    await queryInterface.addColumn("groupMessages", "sent_name", {
+    await queryInterface.addColumn("GroupMessages", "sent_name", {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: ''
     });
 
-    await queryInterface.addColumn("chatinternal", "sent_name", {
+    await queryInterface.addColumn("ChatInternal", "sent_name", {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: ''
@@ -17,7 +17,7 @@ module.exports = {
   },
 
   down: async (queryInterface: QueryInterface) => {
-    await queryInterface.removeColumn("groupMessages", "sent_name");
+    await queryInterface.removeColumn("GroupMessages", "sent_name");
     await queryInterface.removeColumn("chatinternal", "sent_name");
   }
 };

@@ -4,7 +4,7 @@ import api from "../../services/api";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import openSocket from "../../services/socket-io";
 
-import { Badge } from "@material-ui/core";
+import { Badge, InputBase } from "@material-ui/core";
 
 const InternalChat = () => {
 
@@ -24,7 +24,6 @@ const InternalChat = () => {
     console.log("Conectado ao servidor Socket.IO");
   });
 
-
   useEffect(() => {
     if (divMsgEndRef.current) {
       divMsgEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -41,9 +40,7 @@ const InternalChat = () => {
         setMsg([]);
 
         if(loadMsg.data.data.length > 0){
-          loadMsg.data.data.map( item => {
-            setMsg((msgList) => [...msgList, item])
-          })
+          setMsg(loadMsg.data.data)
         }
 
       }catch{
@@ -60,10 +57,13 @@ const InternalChat = () => {
 
   useEffect(() => {
     const handleReceiveMessage = (data) => {
-      if((data?.receiving_user === user.id && data?.sent_user === selectedContact?.id) || (data?.receiving_group != null && data?.receiving_group === selectedGroup?.id)){
-        setMsg((msgList) => [...msgList, data])
-      }
-    };
+          const isForCurrentContact = data.receiving_user === user.id && data.sent_user === selectedContact?.id;
+          const isForCurrentGroup = data.receiving_group && data.receiving_group === selectedGroup?.id;
+
+          if (isForCurrentContact || isForCurrentGroup) {
+            setMsg(prev => [...prev, data]);
+          }
+        };
       socket.on("receive_msg", handleReceiveMessage);
     return () => {
       socket.off("receive_msg", handleReceiveMessage);
@@ -137,7 +137,6 @@ const InternalChat = () => {
   }
 
   const SendMsg = async (event) => {
-    event.preventDefault(); 
 
     history.push(`/internalchat/${selectedContact?.id ?? selectedGroup?.id}`);
 
@@ -210,21 +209,16 @@ const InternalChat = () => {
 
   useEffect(() => {
 
-        const fetchMsg = async () => {
+        const fetchMsgGroup = async () => {
       try {
         const loadMsg = await api.get("/ChatInternal-group", {
           params: { receiving_group: selectedGroup.id, sent_user: user.id } 
         });
 
-        setMsg([]);
-
-        console.log(loadMsg.data.data);
-        
+        setMsg([]);       
 
         if(loadMsg.data.data.length > 0){
-          loadMsg.data.data.map( item => {
-            setMsg((msgList) => [...msgList, item])
-          })
+          setMsg(loadMsg.data.data)
         }
 
       }catch{
@@ -235,7 +229,7 @@ const InternalChat = () => {
       setSelectedContact(null);
     }    
 
-    fetchMsg()
+    fetchMsgGroup()
   }, [selectedGroup]);
 
 
@@ -302,7 +296,14 @@ const InternalChat = () => {
                               (item?.receiving_user === user.id || item.sent_user != user.id) ?
                                   <div className='msg-left mb-2 text-left'>
                                     
-                                    <div className='alert alert-primary w-' role='alert' style={{width: 'max-content' , maxWidth: '-moz-available'}}>
+                                    <div className='alert alert-primary w-' 
+                                    role='alert'  style={{
+                                        maxWidth: '80%',
+                                        width: 'fit-content',
+                                        wordBreak: 'break-word',
+                                        whiteSpace: 'pre-wrap',
+                                        padding: '0.5rem 1rem',
+                                      }}>
                                       <p className='fw-bold'>{item.sent_name}:</p>
                                     {item.type_message === 'file' ? (
                                         <div>
@@ -313,13 +314,19 @@ const InternalChat = () => {
                                            <label>{item.filename}</label>
                                           </div>
                                         </div>
-                                      ):item.message }    
-                                      <label style={{fontSize: '0.6rem', marginLeft: '0.5rem', marginTop: '0.2rem'}}>{item.data}</label>
+                                      ):<pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '0.9rem' }}>{item.message}</pre>  }
+                                      <label style={{fontSize: '0.6rem', marginLeft: '0.5rem', marginTop: '0.2rem' }}>{item.data}</label>
                                     </div>
                                   </div>
                                     : 
                                   <div className='justify-content-end d-flex mb-2 text-right ml-auto' >
-                                    <div className='alert alert-secondary' role='alert' style={{width: 'max-content', maxWidth: '-moz-available'}}>
+                                    <div className='alert alert-secondary' role='alert' style={{
+                                        maxWidth: '80%',
+                                        width: 'fit-content',
+                                        wordBreak: 'break-word',
+                                        whiteSpace: 'pre-wrap',
+                                        padding: '0.5rem 1rem',
+                                      }}>
                                       {item.type_message === 'file' ? (
                                         <div>
                                           <div className='row'>
@@ -329,33 +336,44 @@ const InternalChat = () => {
                                            <label>{item.filename}</label>
                                           </div>
                                         </div>
-                                      ):item.message } 
-                                    <label style={{fontSize: '0.6rem', marginLeft: '0.5rem', marginTop: '0.2rem'}}>{item.data}</label>   
+                                      ):<pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' , fontSize: '0.9rem' }}>{item.message}</pre>  }
+                                    <label style={{fontSize: '0.7rem', marginLeft: '0.5rem', marginTop: '0.2rem'}}>{item.data}</label>
                                     </div>
                                   </div>
                             ))}
                             <div ref={divMsgEndRef} />
                         </div>
                       </div>
-                      <div className='mt-auto'>
-                        '{!loadUpload ?
-                         <form onSubmit={SendMsg}>
-                          <div className='input-group'>
-                            <input type='text' className='form-control' ref={inputMsg} />
-                            <div className='input-group-append'>
-                              <button className='btn btn-outline-secondary' type='submit'>Enviar</button>
-                              <label className='btn btn-outline-secondary' htmlFor="upload-button">Anexo</label>
-                              <input
-                                type="file"
-                                id="upload-button"
-                                onChange={uploadFiles}
-                                style={{display: 'none'}}
-                              />
+                        <div className='mt-auto'>
+                          {!loadUpload ? (
+                            <form onSubmit={SendMsg}>
+                              <div className='input-group align-items-end'>
+                                <textarea
+                                  className='form-control'
+                                  ref={inputMsg}
+                                  rows={3}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                      e.preventDefault(); // Impede nova linha
+                                      SendMsg(); // Chama função de envio
+                                    }
+                                  }}
+                                />
+                                <div className='input-group-append d-flex flex-column justify-content-end ms-2'>
+                                  <button className='btn btn-outline-secondary mb-1' type='submit'>Enviar</button>
+                                  <label className='btn btn-outline-secondary mb-0' htmlFor="upload-button">Anexo</label>
+                                  <input
+                                    type="file"
+                                    id="upload-button"
+                                    onChange={uploadFiles}
+                                    style={{ display: 'none' }}
+                                  />
+                                </div>
                               </div>
-                            </div>
-                          </form>:   
+                            </form>
+                          ) : (
                             <label>Carregando Arquivo...</label>
-                          }
+                          )}
                         </div>
                    </div>
                 ) :(
